@@ -1,0 +1,123 @@
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 2rem;
+  position: relative;
+ }
+
+ .menu {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  z-index: 1000;
+}
+
+.menu li {
+  margin: 0;
+}
+
+.nav a:link,
+.nav a:visited {
+  text-decoration: none;
+  color: var(--color-light--2);
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.nav a:hover {
+  color: var(--color-brand--1);
+}
+
+.nav a:global(.active) {
+  color: var(--color-brand--2);
+}
+
+a.ctaLink:link,
+a.ctaLink:visited {
+  background-color: var(--color-brand--2);
+  color: var(--color-dark--0);
+  padding: 0.8rem 1.8rem;
+  border-radius: 7px;
+  font-size: 1.4rem;
+  transition: background-color 0.2s ease;
+}
+
+a.ctaLink:hover {
+  background-color: var(--color-brand--1);
+  color: var(--color-dark--0);
+}
+
+.menuToggle {
+  display: none;
+  cursor: pointer;
+  font-size: 2.6rem;
+  color: var(--color-light--2);
+  background: none;
+  z-index: 1001;
+  border: none;
+}
+
+@media (max-width: 900px) {
+  .menu {
+    gap: 2rem;
+  }
+
+  .nav a:link,
+  .nav a:visited {
+    font-size: 1.4rem;
+  }
+}
+
+ @media (max-width: 700px) {
+  .menu {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    padding: 1.5rem;
+    gap: 1.5rem;
+    background-color: var(--color-dark--1); /* menu dropdown bg */
+    border-top: 2px solid var(--color-light--3);
+  }
+
+  .menu.open {
+    display: flex;
+  }
+
+  .menuToggle {
+    display: block;
+  }
+
+   .menu a.ctaLink:link,
+  .menu a.ctaLink:visited {
+    background: none;
+    color: var(--color-light--2);
+    padding: 0;
+    border-radius: 0;
+    font-size: 1.5rem;
+  }
+
+  .menu a.ctaLink:hover {
+    color: var(--color-brand--1);
+    background: none;
+  }
+}
+
+ @media (max-width: 400px) {
+  .nav {
+    padding: 0.8rem 1.2rem;
+  }
+
+  a.ctaLink:link,
+  a.ctaLink:visited {
+    font-size: 1.2rem;
+    padding: 0.6rem 1.2rem;
+  }
+}

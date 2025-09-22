@@ -1,0 +1,175 @@
+/* Blog.module.css */
+
+.blog {
+  padding: 4rem 2rem;
+
+  position: relative;
+}
+
+.blog::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 70%, 
+    rgba(237, 211, 130, 0.1) 0%, 
+    transparent 50%);
+  pointer-events: none;
+}
+
+ .header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 3rem auto;
+  position: relative;
+  z-index: 1;
+}
+
+.header h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, 
+    var(--color-brand--1) 0%, 
+    var(--color-brand--2) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header p {
+  font-size: 1.4rem;
+  line-height: 1.6;
+}
+
+ .blogGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+ .card {
+  background: var(--color-dark--1);
+  border-radius: 1.2rem;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(20, 27, 65, 0.3);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.cardBody {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;  
+  height: 100%;
+}
+
+.cardBody h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #EDD382;
+  margin-bottom: 1rem;
+}
+
+.cardBody p {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.cardBody button {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(135deg, 
+    var(--color-brand--1) 0%, 
+    var(--color-brand--2) 100%);
+  color: var(--color-dark--0);
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin-top: auto;  
+}
+
+.cardBody button:hover {
+  transform: translateY(-2px);
+}
+
+/* /*Tablet
+@media (max-width: 992px) {
+  .blogGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .header h1 {
+    font-size: 2.2rem;
+  }
+
+  .header p {
+    font-size: 1.3rem;
+  }
+} */
+
+/* Mobile */
+@media (max-width: 600px) {
+  .blog {
+    padding: 3rem 1rem;
+  }
+
+  .blogGrid {
+    display: flex;
+    overflow-x: auto;
+    /* scroll-snap-type: x mandatory; */
+    gap: 1.5rem;
+    padding-bottom: 1rem;
+  }
+
+  .card {
+    flex: 0 0 80%;
+    /* scroll-snap-align: start; */
+  }
+
+  .header h1 {
+    font-size: 2rem;
+  }
+
+  .header p {
+    font-size: 1.2rem;
+  }
+
+  .cardBody {
+    padding: 1.5rem;
+  }
+
+  .cardBody h3 {
+    font-size: 1.3rem;
+  }
+
+  .cardBody p {
+    font-size: 1.1rem;
+  }
+
+  .cardBody button {
+    font-size: 1.1rem;
+    padding: 0.7rem 1.3rem;
+  }
+}

@@ -1,0 +1,15 @@
+.logo {
+  height: 7rem;    
+  
+}
+ @media (min-width: 1024px) {
+  .logo {
+    height: 9rem;
+  }
+}
+
+ @media (max-width: 768px) {
+  .logo {
+    height: 6rem;
+  }
+}

@@ -1,0 +1,8 @@
+.product {
+ 
+  background: linear-gradient(135deg, 
+    var(--color-dark--0) 0%, 
+    var(--color-dark--1) 50%,
+    var(--color-dark--2) 100%);
+}
+

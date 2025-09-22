@@ -1,0 +1,239 @@
+.destinations {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3rem;
+  padding: 4rem 3rem;
+  /* border-radius: 1.2rem; */
+  
+  position: relative;
+}
+
+.destinations::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+ 
+  pointer-events: none;
+}
+
+.imageGallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  flex: 1 1 60%;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.card {
+  position: relative;
+  border-radius: 1.6rem;
+  overflow: hidden;
+  flex: 1 1 260px;
+  max-width: 30rem;
+  min-height: 36rem;
+  cursor: pointer;
+  background-color: var(--color-dark--1);
+  box-shadow: 0 8px 20px rgba(20, 27, 65, 0.3);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 12px 28px rgba(20, 27, 65, 0.4);
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card:hover img {
+  transform: scale(1.06);
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, 
+    rgba(20, 27, 65, 0.85) 0%, 
+    rgba(35, 41, 80, 0.6) 40%,
+    transparent 70%);
+  color: var(--color-light--2);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.overlay h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.content {
+  flex: 1 1 35%;
+  max-width: 45rem;
+  position: relative;
+  z-index: 1;
+}
+
+.content h1 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin-bottom: 1.2rem;
+  color: var(--color-light--2);
+  background: linear-gradient(135deg, 
+    var(--color-brand--1) 0%, 
+    var(--color-brand--2) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+
+.content h1::after {
+  content: "";
+  display: block;
+  width: 6rem;
+  height: 0.4rem;
+  margin-top: 0.6rem;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--color-brand--1),
+    var(--color-brand--2)
+  );
+}
+.content h1::after {
+  content: none;
+}
+
+.content p {
+  font-size: 1.5rem;
+  line-height: 1.7;
+  margin-top: 1rem;
+  text-align: justify;
+  letter-spacing: 0.5px;
+}
+
+/* MEDIA QUERIES */
+
+
+@media (min-width: 1440px) {
+  .destinations {
+    gap: 5rem;
+    padding: 5rem 8rem;
+  }
+  .content h1 {
+    font-size: 3rem;
+  }
+  .content p {
+    font-size: 1.6rem;
+  }
+  .card {
+    max-width: 34rem;
+    min-height: 42rem;
+  }
+}
+
+/* Medium Desktop */
+/* @media (max-width: 1200px) {
+  .content {
+    max-width: 40rem;
+  }
+  .content h1 {
+    font-size: 2.2rem;
+  }
+  .content p {
+    font-size: 1.4rem;
+  }
+  .card {
+    min-height: 30rem;
+  }
+} */
+
+/* Tablet */
+/* @media (max-width: 992px) {
+  .destinations {
+    flex-direction: column;
+    text-align: center;
+    padding: 3rem 1.5rem;
+  }
+  .imageGallery {
+    flex: 1 1 100%;
+  }
+  .content {
+    max-width: 100%;
+  }
+  .content h1::after {
+    margin: 0.6rem auto 0 auto;
+  }
+} */
+
+/* Mobile */
+@media (max-width: 600px) {
+  .imageGallery {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 1.2rem;
+    /* -webkit-overflow-scrolling: touch; */
+    /* scroll-snap-type: x mandatory; */
+    /* scroll-padding-left: 1rem; */
+  }
+  .card {
+    flex: 0 0 80%;
+    max-width: 24rem;
+    min-height: 22rem;
+    /* scroll-snap-align: start; */
+  }
+  .content h1 {
+    font-size: 2rem;
+  }
+  .content p {
+    font-size: 1.3rem;
+  }
+  .overlay h3 {
+    font-size: 1.2rem;
+  }
+}
+
+/* Accessibility & Performance */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card img {
+    transition: none;
+  }
+  
+  .card:hover {
+    transform: none;
+  }
+  
+  .card:hover img {
+    transform: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .content h1 {
+    -webkit-text-fill-color: var(--color-light--2);
+    color: var(--color-light--2);
+  }
+  
+  .card {
+    border: 2px solid var(--color-light--2);
+  }
+}
