@@ -7,6 +7,7 @@ const {
   updateCity,
   deleteCity,
 } = require("../controllers/cityController");
+const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -18,12 +19,12 @@ function validateObjectId(req, res, next) {
   next();
 }
 
-router.get("/", getCities);
-router.get("/:id", validateObjectId, getCity);
-
-
-router.post("/", /* protect, */ createCity);
-router.put("/:id", /* protect, */ validateObjectId, updateCity);
-router.delete("/:id", /* protect, */ validateObjectId, deleteCity);
+// All routes require authentication
+router.get("/", protect, getCities);
+router.get("/:id", protect, validateObjectId, getCity);
+router.post("/", protect, createCity);
+router.put("/:id", protect, validateObjectId, updateCity);
+router.delete("/:id", protect, validateObjectId, deleteCity);
 
 module.exports = router;
+

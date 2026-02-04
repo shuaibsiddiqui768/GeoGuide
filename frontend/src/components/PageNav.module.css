@@ -4,9 +4,9 @@
   justify-content: space-between;
   padding: 1.2rem 2rem;
   position: relative;
- }
+}
 
- .menu {
+.menu {
   list-style: none;
   display: flex;
   align-items: center;
@@ -37,16 +37,23 @@
 }
 
 a.ctaLink:link,
-a.ctaLink:visited {
+a.ctaLink:visited,
+button.ctaLink {
   background-color: var(--color-brand--2);
   color: var(--color-dark--0);
   padding: 0.8rem 1.8rem;
   border-radius: 7px;
   font-size: 1.4rem;
   transition: background-color 0.2s ease;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-family: inherit;
 }
 
-a.ctaLink:hover {
+a.ctaLink:hover,
+button.ctaLink:hover {
   background-color: var(--color-brand--1);
   color: var(--color-dark--0);
 }
@@ -72,7 +79,7 @@ a.ctaLink:hover {
   }
 }
 
- @media (max-width: 700px) {
+@media (max-width: 700px) {
   .menu {
     display: none;
     flex-direction: column;
@@ -83,7 +90,8 @@ a.ctaLink:hover {
     width: 100%;
     padding: 1.5rem;
     gap: 1.5rem;
-    background-color: var(--color-dark--1); /* menu dropdown bg */
+    background-color: var(--color-dark--1);
+    /* menu dropdown bg */
     border-top: 2px solid var(--color-light--3);
   }
 
@@ -95,8 +103,9 @@ a.ctaLink:hover {
     display: block;
   }
 
-   .menu a.ctaLink:link,
-  .menu a.ctaLink:visited {
+  .menu a.ctaLink:link,
+  .menu a.ctaLink:visited,
+  .menu button.ctaLink {
     background: none;
     color: var(--color-light--2);
     padding: 0;
@@ -104,19 +113,21 @@ a.ctaLink:hover {
     font-size: 1.5rem;
   }
 
-  .menu a.ctaLink:hover {
+  .menu a.ctaLink:hover,
+  .menu button.ctaLink:hover {
     color: var(--color-brand--1);
     background: none;
   }
 }
 
- @media (max-width: 400px) {
+@media (max-width: 400px) {
   .nav {
     padding: 0.8rem 1.2rem;
   }
 
   a.ctaLink:link,
-  a.ctaLink:visited {
+  a.ctaLink:visited,
+  button.ctaLink {
     font-size: 1.2rem;
     padding: 0.6rem 1.2rem;
   }

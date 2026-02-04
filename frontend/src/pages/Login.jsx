@@ -1,7 +1,9 @@
-import styles from "../pages/Login.module.css";
+import styles from "./Login.module.css";
 import { useState } from "react";
 import PageNav from "../components/PageNav";
-import { useNavigate } from "react-router-dom";
+import Logo from "../components/Logo";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -9,6 +11,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,9 +25,12 @@ export default function Login() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Login failed");
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      navigate("/");
+      
+      // Use AuthContext login function
+      login(data.token, data.user);
+      
+      // Redirect to app after login
+      navigate("/app");
     } catch (err) {
       setMsg(err.message);
     } finally {
@@ -36,6 +42,13 @@ export default function Login() {
     <main className={styles.login}>
       <PageNav />
       <form className={styles.form} onSubmit={handleSubmit}>
+        {/* Logo and Heading */}
+        <div className={styles.header}>
+          <Logo />
+          <h2 className={styles.title}>Welcome Back</h2>
+          <p className={styles.subtitle}>Login to continue your adventures</p>
+        </div>
+
         <div className={styles.row}>
           <label htmlFor="email">Email address</label>
           <input
@@ -62,7 +75,12 @@ export default function Login() {
           </button>
         </div>
 
-        {msg && <p>{msg}</p>}
+        {msg && <p className={styles.message}>{msg}</p>}
+
+        <p className={styles.signupLink}>
+          Don't have an account?{" "}
+          <Link to="/signup">Sign up</Link>
+        </p>
       </form>
     </main>
   );

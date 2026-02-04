@@ -9,6 +9,7 @@ function Sidebar() {
       <Logo />
       <AppNav />
 
+      {/* help to render the child nested routes of AppLayout (city,country etc) */}
       <Outlet />
 
       <footer className={styles.footer}>

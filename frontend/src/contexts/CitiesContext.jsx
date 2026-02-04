@@ -1,8 +1,13 @@
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
-
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
+import { useAuth } from "./AuthContext";
 
 const BASE_URL = "http://localhost:5000/api";
-
 
 const CitiesContext = createContext();
 
@@ -12,60 +17,94 @@ function CitiesProvider({ children }) {
   const [currentCity, setCurrentCity] = useState(null);
   const [error, setError] = useState(null);
 
+  // Get auth state from AuthContext
+  const { isAuthenticated, user } = useAuth();
+
+  // Helper to get auth headers
+  const getAuthHeaders = useCallback(() => {
+    const token = localStorage.getItem("token");
+    return {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    };
+  }, []);
+
   // Stable helper so callbacks depending on it don't change on every render
   const parseJsonSafe = useCallback(async (res) => {
     const text = await res.text();
     return text ? JSON.parse(text) : null;
   }, []);
 
-  useEffect(() => {
-    async function fetchCities() {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const res = await fetch(`${BASE_URL}/cities`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await parseJsonSafe(res);
-        setCities(Array.isArray(data) ? data : []);
-      } catch (e) {
-        console.error(e);
-        setError(e.message || "Failed to load cities");
-        alert("There was an error while loading data..");
-      } finally {
-        setIsLoading(false);
-      }
+  // Fetch cities for the logged-in user
+  const fetchCities = useCallback(async () => {
+    // Only fetch if user is authenticated
+    if (!isAuthenticated) {
+      setCities([]);
+      return;
     }
+
+    try {
+      setIsLoading(true);
+      setError(null);
+      const res = await fetch(`${BASE_URL}/cities`, {
+        headers: getAuthHeaders(),
+      });
+      if (!res.ok) {
+        if (res.status === 401) {
+          setCities([]);
+          return;
+        }
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const data = await parseJsonSafe(res);
+      setCities(Array.isArray(data) ? data : []);
+    } catch (e) {
+      console.error(e);
+      setError(e.message || "Failed to load cities");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isAuthenticated, getAuthHeaders, parseJsonSafe]);
+
+  // Fetch cities when user authentication changes
+  useEffect(() => {
     fetchCities();
-  }, [parseJsonSafe]);
+  }, [fetchCities, user]);
 
   // Memoize getCity so consumers can safely include it in useEffect deps
   const getCity = useCallback(
     async (id) => {
+      if (!isAuthenticated) return;
+
       try {
         setIsLoading(true);
         setError(null);
-        const res = await fetch(`${BASE_URL}/cities/${id}`);
+        const res = await fetch(`${BASE_URL}/cities/${id}`, {
+          headers: getAuthHeaders(),
+        });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await parseJsonSafe(res);
         setCurrentCity(data);
       } catch (e) {
         console.error(e);
         setError(e.message || "Failed to load city");
-        alert("There was an error while loading data..");
       } finally {
         setIsLoading(false);
       }
     },
-    [parseJsonSafe]
+    [isAuthenticated, getAuthHeaders, parseJsonSafe]
   );
 
   const createCity = useCallback(
     async (newCity) => {
+      if (!isAuthenticated) return;
+
       try {
         setIsLoading(true);
         setError(null);
         const payload = {
           ...newCity,
+          // ISO string (e.g., "2025-09-24T12:00:00.000Z").
           date:
             newCity.date instanceof Date
               ? newCity.date.toISOString()
@@ -73,7 +112,7 @@ function CitiesProvider({ children }) {
         };
         const res = await fetch(`${BASE_URL}/cities`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: getAuthHeaders(),
           body: JSON.stringify(payload),
         });
         const data = await parseJsonSafe(res);
@@ -88,15 +127,20 @@ function CitiesProvider({ children }) {
         setIsLoading(false);
       }
     },
-    [parseJsonSafe]
+    [isAuthenticated, getAuthHeaders, parseJsonSafe]
   );
 
   const deleteCity = useCallback(
     async (id) => {
+      if (!isAuthenticated) return;
+
       try {
         setIsLoading(true);
         setError(null);
-        const res = await fetch(`${BASE_URL}/cities/${id}`, { method: "DELETE" });
+        const res = await fetch(`${BASE_URL}/cities/${id}`, {
+          method: "DELETE",
+          headers: getAuthHeaders(),
+        });
         if (!res.ok && res.status !== 204) {
           const data = await parseJsonSafe(res);
           throw new Error(data?.message || `HTTP ${res.status}`);
@@ -111,7 +155,7 @@ function CitiesProvider({ children }) {
         setIsLoading(false);
       }
     },
-    [parseJsonSafe]
+    [isAuthenticated, getAuthHeaders, parseJsonSafe]
   );
 
   return (
@@ -124,6 +168,7 @@ function CitiesProvider({ children }) {
         getCity,
         createCity,
         deleteCity,
+        refetchCities: fetchCities,
       }}
     >
       {children}
@@ -140,4 +185,5 @@ function useCities() {
 }
 
 export { CitiesProvider, useCities };
+
 

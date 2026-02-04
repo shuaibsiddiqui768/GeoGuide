@@ -18,8 +18,16 @@ const citySchema = new mongoose.Schema(
     notes: { type: String, default: "", trim: true },
     position: { type: positionSchema, required: true },
     clientId: { type: String, index: true }, // optional: preserve old JSON 'id'
+    // Reference to the user who created this city
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
   },
   { timestamps: true }
 );
 
 module.exports = mongoose.model("City", citySchema);
+

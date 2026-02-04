@@ -11,20 +11,22 @@ import Spinner from "../components/Spinner";
 import { useCities } from "../contexts/CitiesContext";
 import { useNavigate } from "react-router-dom";
 
+//convert ISO country code like IN into its flag emoji
 export function convertToEmoji(countryCode) {
   const codePoints = countryCode
     .toUpperCase()
     .split("")
-    .map((char) => 127397 + char.charCodeAt());
-  return String.fromCodePoint(...codePoints);
+    .map((char) => 127397 + char.charCodeAt());//adding 127462 beacuse "Regional indicator symbols" starts from it 
+  return String.fromCodePoint(...codePoints);//Turns those code points into actual Unicode characters.
 }
 
+//reverse-geocoding API from lat and lng we find the country
 const BASE_URL = "https://api.bigdatacloud.net/data/reverse-geocode-client";
 
 function Form() {
   const [lat, lng] = useUrlPosition();
   const { createCity, isLoading } = useCities();
-  const navigate = useNavigate();
+  const navigate = useNavigate();//for url manipulation
 
   const [isLoadingGeocoding, setIsLoadingGeocoding] = useState(false);
   const [cityName, setCityName] = useState("");
@@ -35,6 +37,7 @@ function Form() {
   const [geocodingError, setGeocodingError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  //runs whenever lat and lng changes
   useEffect(
     function () {
       if (!lat && !lng) return;
@@ -42,11 +45,13 @@ function Form() {
         try {
           setIsLoadingGeocoding(true);
           setGeocodingError("");
+          // call reverse-geocode api
           const res = await fetch(
             `${BASE_URL}?latitude=${lat}&longitude=${lng}`
           );
           const data = await res.json();
 
+          //if country code missing returns invalid
           if (!data.countryCode)
             throw new Error(
               "That doesn't seem to be a city. Click somewhere else"
@@ -66,7 +71,7 @@ function Form() {
     [lat, lng]
   );
 
-  async function handleSubmit(e) {
+async function handleSubmit(e) {
     e.preventDefault();
     if (isSubmitting) return;
 
@@ -83,7 +88,7 @@ function Form() {
       cityName,
       country,
       emoji,
-      date: isoDate, 
+      date: isoDate,
       notes,
       position: { lat: Number(lat), lng: Number(lng) }, // ensure numbers
     };
@@ -106,7 +111,9 @@ function Form() {
 
   return (
     <form
-      className={`${styles.form}${isLoading || isSubmitting ? " " + styles.loading : ""}`}
+      className={`${styles.form}${
+        isLoading || isSubmitting ? " " + styles.loading : ""
+      }`}
       onSubmit={handleSubmit}
     >
       <div className={styles.row}>
@@ -121,7 +128,9 @@ function Form() {
       </div>
 
       <div className={styles.row}>
-        <label htmlFor="date">When did you go to {cityName || "the city"}?</label>
+        <label htmlFor="date">
+          When did you go to {cityName || "the city"}?
+        </label>
         <DatePicker
           id="date"
           onChange={(val) => setDate(val)}
@@ -134,7 +143,9 @@ function Form() {
       </div>
 
       <div className={styles.row}>
-        <label htmlFor="notes">Notes about your trip to {cityName || "the city"}</label>
+        <label htmlFor="notes">
+          Notes about your trip to {cityName || "the city"}
+        </label>
         <textarea
           id="notes"
           onChange={(e) => setNotes(e.target.value)}
