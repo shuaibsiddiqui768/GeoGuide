@@ -12,16 +12,20 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please enter your email"],
       unique: [true, "Email must be unique"],
-      lowercase: true,  
+      lowercase: true,
       trim: true,
-      match: [/.+@.+\..+/, "Please enter a valid email"], 
-      set: (v) => (typeof v === "string" ? v.trim().toLowerCase() : v), 
+      match: [/.+@.+\..+/, "Please enter a valid email"],
+      set: (v) => (typeof v === "string" ? v.trim().toLowerCase() : v),
     },
     password: {
       type: String,
       required: [true, "Please enter a password"],
       minlength: [6, "Password must be at least 6 characters"],
-     
+
+    },
+    profileImage: {
+      type: String,
+      default: "",
     },
     createdAt: {
       type: Date,
@@ -30,7 +34,7 @@ const userSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: false, 
+    timestamps: false,
     toJSON: {
       transform(doc, ret) {
         delete ret.password;

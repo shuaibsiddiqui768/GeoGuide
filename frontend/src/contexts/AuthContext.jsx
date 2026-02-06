@@ -33,6 +33,13 @@ function AuthProvider({ children }) {
     setIsAuthenticated(true);
   }
 
+  // Update user function - updates user data
+  function updateUser(userData) {
+    const updatedUser = { ...user, ...userData };
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    setUser(updatedUser);
+  }
+
   // Logout function - clears storage and state
   function logout() {
     localStorage.removeItem("token");
@@ -49,6 +56,7 @@ function AuthProvider({ children }) {
         isLoading,
         login,
         logout,
+        updateUser,
       }}
     >
       {children}
@@ -65,3 +73,4 @@ function useAuth() {
 }
 
 export { AuthProvider, useAuth };
+

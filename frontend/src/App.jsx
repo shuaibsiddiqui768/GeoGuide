@@ -12,6 +12,7 @@ import { CitiesProvider } from "./contexts/CitiesContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Signup from "./pages/Signup";
+import Settings from "./pages/Settings";
 import Guides from "./pages/Guides";
 import Galleries from "./pages/Gallaries";
 
@@ -28,6 +29,14 @@ function App() {
 
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<Signup />} />
+            <Route
+              path="settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              }
+            />
 
             <Route path="app" element={<AppLayout />}>
               {/* nested routes */}

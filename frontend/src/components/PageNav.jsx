@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import styles from "./PageNav.module.css";
 import Logo from "./Logo";
@@ -8,15 +8,34 @@ import LogoutModal from "./LogoutModal";
 function PageNav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setUserDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   function toggleMenu() {
     setMenuOpen((open) => !open);
   }
 
+  function toggleUserDropdown() {
+    setUserDropdownOpen((open) => !open);
+  }
+
   function handleLogoutClick() {
     setMenuOpen(false);
+    setUserDropdownOpen(false);
     setShowLogoutModal(true);
   }
 
@@ -28,6 +47,23 @@ function PageNav() {
 
   function handleCancelLogout() {
     setShowLogoutModal(false);
+  }
+
+  function handleSettingsClick() {
+    setUserDropdownOpen(false);
+    setMenuOpen(false);
+    navigate("/settings");
+  }
+
+  // Get user initial for avatar
+  function getUserInitial() {
+    if (user?.name) {
+      return user.name.charAt(0).toUpperCase();
+    }
+    if (user?.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    return "U";
   }
 
   return (
@@ -59,12 +95,70 @@ function PageNav() {
           </li>
           <li>
             {isAuthenticated ? (
-              <button
-                className={styles.ctaLink}
-                onClick={handleLogoutClick}
-              >
-                Logout
-              </button>
+              <div className={styles.userMenu} ref={dropdownRef}>
+                {/* User Icon */}
+                <button
+                  className={styles.userIcon}
+                  onClick={toggleUserDropdown}
+                  aria-label="User menu"
+                >
+                  {user?.profileImage ? (
+                    <img
+                      src={user.profileImage}
+                      alt="Profile"
+                      className={styles.userImage}
+                    />
+                  ) : (
+                    <span className={styles.userInitial}>{getUserInitial()}</span>
+                  )}
+                </button>
+
+                {/* Dropdown Menu */}
+                {userDropdownOpen && (
+                  <div className={styles.userDropdown}>
+                    <div className={styles.userInfo}>
+                      <span className={styles.userName}>
+                        {user?.name || user?.email || "User"}
+                      </span>
+                      <span className={styles.userEmail}>{user?.email}</span>
+                    </div>
+                    <div className={styles.dropdownDivider}></div>
+                    <button
+                      className={styles.dropdownItem}
+                      onClick={handleSettingsClick}
+                    >
+                      <svg
+                        className={styles.dropdownIcon}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <circle cx="12" cy="12" r="3" />
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                      </svg>
+                      Settings
+                    </button>
+                    <button
+                      className={`${styles.dropdownItem} ${styles.logoutItem}`}
+                      onClick={handleLogoutClick}
+                    >
+                      <svg
+                        className={styles.dropdownIcon}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                      </svg>
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <NavLink
                 to="/login"
