@@ -26,8 +26,8 @@ function Settings() {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteMsg, setDeleteMsg] = useState({ text: "", type: "" });
 
-  // Get API base URL
-  const API_BASE = "http://localhost:5000/api";
+  // Get API base URL from environment
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   // Convert file to base64
   function fileToBase64(file) {
