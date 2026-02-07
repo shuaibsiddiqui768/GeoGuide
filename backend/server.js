@@ -43,6 +43,8 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/cities", require("./routes/cityRoutes"));
 app.use("/api/upload", require("./routes/uploadRoutes"));
+app.use("/api/tours", require("./routes/tourRoutes"));
+app.use("/api/friends", require("./routes/friendRoutes"));
 
 // Health route
 app.get("/", (req, res) => {

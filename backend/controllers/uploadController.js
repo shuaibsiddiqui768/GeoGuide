@@ -77,3 +77,40 @@ exports.removeProfileImage = async (req, res) => {
         res.status(500).json({ message: "Failed to remove image" });
     }
 };
+
+// Upload city images to Cloudinary (multiple images)
+exports.uploadCityImages = async (req, res) => {
+    try {
+        const { images } = req.body; // Array of base64 images
+
+        if (!images || !Array.isArray(images) || images.length === 0) {
+            return res.status(400).json({ message: "No images provided" });
+        }
+
+        // Limit to 5 images max
+        const imagesToUpload = images.slice(0, 5);
+
+        // Upload all images to Cloudinary
+        const uploadPromises = imagesToUpload.map((image) =>
+            cloudinary.uploader.upload(image, {
+                folder: "geoguide/cities",
+                width: 800,
+                height: 600,
+                crop: "limit",
+                quality: "auto",
+                format: "webp",
+            })
+        );
+
+        const uploadResults = await Promise.all(uploadPromises);
+        const imageUrls = uploadResults.map((result) => result.secure_url);
+
+        res.status(200).json({
+            message: "Images uploaded successfully",
+            images: imageUrls,
+        });
+    } catch (error) {
+        console.error("City images upload error:", error);
+        res.status(500).json({ message: "Failed to upload images" });
+    }
+};

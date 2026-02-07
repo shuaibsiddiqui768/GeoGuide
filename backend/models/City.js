@@ -17,6 +17,7 @@ const citySchema = new mongoose.Schema(
     date: { type: Date, required: true },
     notes: { type: String, default: "", trim: true },
     position: { type: positionSchema, required: true },
+    images: [{ type: String }], // Array of Cloudinary image URLs
     clientId: { type: String, index: true }, // optional: preserve old JSON 'id'
     // Reference to the user who created this city
     user: {

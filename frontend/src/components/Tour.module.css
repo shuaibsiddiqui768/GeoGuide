@@ -1,0 +1,420 @@
+.tour {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 0.5rem;
+    height: 100%;
+}
+
+.header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    background: var(--color-dark--2);
+    padding: 1.5rem;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.tourIcon {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, var(--color-brand--2), var(--color-brand--1));
+    padding: 0.8rem;
+    border-radius: 12px;
+}
+
+.tourInfo {
+    flex: 1;
+}
+
+.tourName {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 0.5rem 0;
+}
+
+.tourDescription {
+    font-size: 1.3rem;
+    color: #bbb;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Trip Details Grid */
+.detailsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.8rem;
+}
+
+.detailCard {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    background: var(--color-dark--2);
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--color-dark--1);
+}
+
+.detailIcon {
+    font-size: 1.6rem;
+}
+
+.detailContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.detailLabel {
+    font-size: 1rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detailValue {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.detailSub {
+    font-size: 1rem;
+    color: #00c46a;
+}
+
+/* Section */
+.section {
+    background: var(--color-dark--2);
+    padding: 1.5rem;
+    border-radius: 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.sectionTitle {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 1rem 0;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--color-dark--1);
+    flex-shrink: 0;
+}
+
+.emptyMessage {
+    font-size: 1.3rem;
+    color: #aaa;
+    text-align: center;
+    padding: 2rem 1rem;
+    margin: auto;
+}
+
+.cityList {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    flex: 1;
+}
+
+.cityItem {
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+    background: var(--color-dark--1);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    flex-shrink: 0;
+}
+
+.cityItem:hover {
+    border-color: var(--color-brand--2);
+    background: var(--color-dark--0);
+}
+
+/* Route Indicator */
+.routeIndicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.8rem 0 0.8rem 0.8rem;
+    min-width: 30px;
+}
+
+.stopNumber {
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, var(--color-brand--2), var(--color-brand--1));
+    color: var(--color-dark--0);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.routeLine {
+    flex: 1;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--color-brand--2), var(--color-dark--1));
+    margin-top: 0.4rem;
+    min-height: 20px;
+}
+
+.cityLink {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 0.5rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.emoji {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-dark--2);
+    border-radius: 8px;
+}
+
+.thumbnail {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 1px solid var(--color-dark--0);
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cityDetails {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+}
+
+.cityName {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.country {
+    font-size: 1.1rem;
+    color: #bbb;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.date {
+    font-size: 1rem;
+    color: #00c46a;
+    font-weight: 600;
+}
+
+.removeBtn {
+    background: rgba(255, 107, 107, 0.15);
+    border: none;
+    color: #ff6b6b;
+    padding: 0.5rem 0.7rem;
+    margin-right: 0.6rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    align-self: center;
+}
+
+.removeBtn:hover {
+    background: rgba(255, 107, 107, 0.3);
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-start;
+    flex-shrink: 0;
+}
+
+/* Scrollbar styling */
+.cityList::-webkit-scrollbar {
+    width: 6px;
+}
+
+.cityList::-webkit-scrollbar-track {
+    background: var(--color-dark--1);
+    border-radius: 3px;
+}
+
+.cityList::-webkit-scrollbar-thumb {
+    background: var(--color-dark--0);
+    border-radius: 3px;
+}
+
+.cityList::-webkit-scrollbar-thumb:hover {
+    background: var(--color-light--3);
+}
+
+/* Participants Styles */
+.participantsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding: 0.5rem 0;
+}
+
+.participant {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 6rem;
+}
+
+.participantImg {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-brand--2);
+}
+
+.participantInitial {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: var(--color-brand--1);
+    color: var(--color-dark--0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.8rem;
+    border: 2px solid var(--color-brand--2);
+}
+
+.participantName {
+    font-size: 1rem;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.ownerImg {
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.ownerInitial {
+    background: #ffd700;
+    color: var(--color-dark--2);
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.pendingParticipant {
+    opacity: 0.7;
+}
+
+.pendingParticipant .participantName {
+    font-style: italic;
+    color: #bbb;
+}
+
+/* Invitation Banner */
+.inviteBanner {
+    background: var(--color-dark--1);
+    border: 1px solid var(--color-brand--2);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: slideDown 0.3s ease;
+}
+
+.inviteBanner p {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #fff;
+    font-weight: 500;
+}
+
+.bannerActions {
+    display: flex;
+    gap: 1rem;
+}
+
+.acceptBtn {
+    background: var(--color-brand--2);
+    color: var(--color-dark--0);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.acceptBtn:hover {
+    background: var(--color-brand--1);
+}
+
+.rejectBtn {
+    background: rgba(255, 107, 107, 0.15);
+    color: #ff6b6b;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.rejectBtn:hover {
+    background: rgba(255, 107, 107, 0.25);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

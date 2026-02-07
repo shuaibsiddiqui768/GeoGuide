@@ -57,7 +57,9 @@ function CitiesProvider({ children }) {
         throw new Error(`HTTP ${res.status}`);
       }
       const data = await parseJsonSafe(res);
-      setCities(Array.isArray(data) ? data : []);
+      // Handle both {data: [...]} and direct array response
+      const citiesData = data?.data || data;
+      setCities(Array.isArray(citiesData) ? citiesData : []);
     } catch (e) {
       console.error(e);
       setError(e.message || "Failed to load cities");
@@ -97,7 +99,7 @@ function CitiesProvider({ children }) {
 
   const createCity = useCallback(
     async (newCity) => {
-      if (!isAuthenticated) return;
+      if (!isAuthenticated) return null;
 
       try {
         setIsLoading(true);
@@ -119,10 +121,12 @@ function CitiesProvider({ children }) {
         if (!res.ok) throw new Error(data?.message || `HTTP ${res.status}`);
         setCities((prev) => [...prev, data]);
         setCurrentCity(data);
+        return data; // Return the created city
       } catch (e) {
         console.error(e);
         setError(e.message || "Failed to create city");
         alert("There was an error creating city..");
+        return null;
       } finally {
         setIsLoading(false);
       }
@@ -158,6 +162,45 @@ function CitiesProvider({ children }) {
     [isAuthenticated, getAuthHeaders, parseJsonSafe]
   );
 
+  const updateCity = useCallback(
+    async (id, cityData) => {
+      if (!isAuthenticated) return;
+
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+         const payload = {
+          ...cityData,
+          date:
+            cityData.date instanceof Date
+              ? cityData.date.toISOString()
+              : cityData.date,
+        };
+
+        const res = await fetch(`${BASE_URL}/cities/${id}`, {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(payload),
+        });
+        const data = await parseJsonSafe(res);
+        if (!res.ok) throw new Error(data?.message || `HTTP ${res.status}`);
+        
+        // Update local state
+        setCities((prev) => prev.map((city) => (city._id === id ? data : city)));
+        setCurrentCity(data);
+        return data;
+      } catch (e) {
+        console.error(e);
+        setError(e.message || "Failed to update city");
+        alert("There was an error updating city..");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [isAuthenticated, getAuthHeaders, parseJsonSafe]
+  );
+
   return (
     <CitiesContext.Provider
       value={{
@@ -168,6 +211,7 @@ function CitiesProvider({ children }) {
         getCity,
         createCity,
         deleteCity,
+        updateCity,
         refetchCities: fetchCities,
       }}
     >

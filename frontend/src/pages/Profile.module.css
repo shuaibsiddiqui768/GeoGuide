@@ -1,0 +1,506 @@
+.profile {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--color-dark--1) 0%, var(--color-dark--0) 100%);
+    padding-bottom: 4rem;
+}
+
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.profileContainer {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: flex-start;
+    gap: 2.5rem;
+    background: var(--color-dark--2);
+    padding: 3rem;
+    border-radius: 20px;
+    margin-bottom: 2.5rem;
+    position: relative;
+}
+
+.avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-brand--2), var(--color-brand--1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 4px solid var(--color-dark--1);
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.initial {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--color-dark--0);
+}
+
+.userInfo {
+    flex: 1;
+}
+
+.name {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 0.5rem 0;
+}
+
+.email {
+    font-size: 1.4rem;
+    color: #888;
+    margin: 0 0 1rem 0;
+}
+
+.bio {
+    font-size: 1.6rem;
+    color: #bbb;
+    margin: 0 0 0.8rem 0;
+}
+
+.memberSince {
+    font-size: 1.3rem;
+    color: #00c46a;
+    margin: 0;
+}
+
+.editBtn {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    padding: 0.8rem 1.5rem;
+    background: var(--color-dark--1);
+    color: #fff;
+    border: 1px solid var(--color-dark--0);
+    border-radius: 8px;
+    font-size: 1.3rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.editBtn:hover {
+    background: var(--color-brand--2);
+    color: var(--color-dark--0);
+    border-color: var(--color-brand--2);
+}
+
+.userHandle {
+    display: block;
+    font-size: 1.6rem;
+    color: var(--color-brand--2);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+/* Stats Grid */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.statCard {
+    background: var(--color-dark--2);
+    padding: 2rem;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.statCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.statIcon {
+    font-size: 2.5rem;
+}
+
+.statNumber {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.statLabel {
+    font-size: 1.2rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Sections */
+.section {
+    background: var(--color-dark--2);
+    padding: 2rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-dark--1);
+}
+
+.sectionTitle {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+}
+
+.viewAll {
+    font-size: 1.3rem;
+    color: var(--color-brand--2);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.viewAll:hover {
+    color: var(--color-brand--1);
+}
+
+.emptyMessage {
+    font-size: 1.5rem;
+    color: #888;
+    text-align: center;
+    padding: 2rem;
+}
+
+/* Filter Bar */
+.filterBar {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.filterGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.filterGroup label {
+    font-size: 1.3rem;
+    color: #aaa;
+}
+
+.filterSelect {
+    padding: 0.7rem 1.2rem;
+    background: var(--color-dark--1);
+    color: #fff;
+    border: 1px solid var(--color-dark--0);
+    border-radius: 8px;
+    font-size: 1.3rem;
+    font-family: inherit;
+    cursor: pointer;
+    min-width: 150px;
+    transition: all 0.2s ease;
+}
+
+.filterSelect:hover {
+    border-color: var(--color-brand--2);
+}
+
+.filterSelect:focus {
+    outline: none;
+    border-color: var(--color-brand--2);
+}
+
+.clearFilters {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clearFilters:hover {
+    background: rgba(255, 107, 107, 0.3);
+}
+
+/* Flag Container */
+.flagContainer {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-dark--2);
+    border: 1px solid var(--color-dark--0);
+}
+
+.flagImage {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* Photo Gallery */
+.photoGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.photoCard {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.photoCard:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.photoCard img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photoCity {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.6rem;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.morePhotos {
+    text-align: center;
+    color: #888;
+    font-size: 1.3rem;
+    margin-top: 1.5rem;
+}
+
+/* Lightbox */
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.lightboxContent {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+}
+
+.lightboxContent img {
+    max-width: 100%;
+    max-height: 85vh;
+    border-radius: 10px;
+}
+
+.lightboxCaption {
+    text-align: center;
+    color: #fff;
+    font-size: 1.6rem;
+    margin-top: 1rem;
+}
+
+.closeLightbox {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: color 0.2s ease;
+}
+
+.closeLightbox:hover {
+    color: var(--color-brand--2);
+}
+
+/* City Grid */
+.cityGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 1.2rem;
+}
+
+.cityCard {
+    background: var(--color-dark--1);
+    padding: 1.2rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
+.cityCard:hover {
+    background: var(--color-dark--0);
+    transform: scale(1.03);
+}
+
+.cityImage {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.cityEmoji {
+    font-size: 3rem;
+}
+
+.cityName {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+}
+
+.cityCountry {
+    font-size: 1.1rem;
+    color: #888;
+}
+
+/* Trip Grid */
+.tripGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.2rem;
+}
+
+.tripCard {
+    background: var(--color-dark--1);
+    padding: 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
+.tripCard:hover {
+    background: var(--color-dark--0);
+    transform: scale(1.03);
+}
+
+.tripIcon {
+    font-size: 2.5rem;
+}
+
+.tripName {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+}
+
+.tripCities {
+    font-size: 1.2rem;
+    color: var(--color-brand--2);
+}
+
+.tripDate {
+    font-size: 1.1rem;
+    color: #888;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        text-align: center;
+        padding-top: 5rem;
+    }
+
+    .editBtn {
+        top: 1rem;
+        right: 1rem;
+    }
+
+    .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .name {
+        font-size: 2.2rem;
+    }
+
+    .photoGrid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .statsGrid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .statCard {
+        padding: 1.5rem 1rem;
+    }
+
+    .statNumber {
+        font-size: 2rem;
+    }
+}

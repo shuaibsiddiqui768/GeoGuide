@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import styles from "./PageNav.module.css";
 import Logo from "./Logo";
 import { useAuth } from "../contexts/AuthContext";
+import { useTours } from "../contexts/ToursContext";
 import LogoutModal from "./LogoutModal";
 
 function PageNav() {
@@ -10,6 +11,7 @@ function PageNav() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const { isAuthenticated, logout, user } = useAuth();
+  const { invites } = useTours();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
@@ -55,6 +57,24 @@ function PageNav() {
     navigate("/settings");
   }
 
+  function handleProfileClick() {
+    setUserDropdownOpen(false);
+    setMenuOpen(false);
+    navigate("/profile");
+  }
+
+  function handleNotificationsClick() {
+    setUserDropdownOpen(false);
+    setMenuOpen(false);
+    navigate("/notifications");
+  }
+
+  function handleFriendsClick() {
+    setUserDropdownOpen(false);
+    setMenuOpen(false);
+    navigate("/friends");
+  }
+
   // Get user initial for avatar
   function getUserInitial() {
     if (user?.name) {
@@ -94,6 +114,11 @@ function PageNav() {
             </NavLink>
           </li>
           <li>
+            <NavLink to="/search" onClick={() => setMenuOpen(false)}>
+              🔍 Search
+            </NavLink>
+          </li>
+          <li>
             {isAuthenticated ? (
               <div className={styles.userMenu} ref={dropdownRef}>
                 {/* User Icon */}
@@ -123,6 +148,77 @@ function PageNav() {
                       <span className={styles.userEmail}>{user?.email}</span>
                     </div>
                     <div className={styles.dropdownDivider}></div>
+                    <button
+                      className={styles.dropdownItem}
+                      onClick={handleProfileClick}
+                    >
+                      <svg
+                        className={styles.dropdownIcon}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                      Profile
+                    </button>
+                    <button
+                      className={styles.dropdownItem}
+                      onClick={handleFriendsClick}
+                    >
+                      <svg
+                        className={styles.dropdownIcon}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                      </svg>
+                      Friends
+                    </button>
+                    <button
+                      className={styles.dropdownItem}
+                      onClick={handleNotificationsClick}
+                    >
+                      <span style={{
+                        position: 'relative',
+                        display: 'flex',
+                        alignItems: 'center',
+                        fontSize: '1.2rem',
+                        minWidth: '18px',
+                        justifyContent: 'center'
+                      }}>
+                        🔔
+                        {invites.length > 0 && (
+                          <span style={{
+                            position: 'absolute',
+                            top: '-5px',
+                            right: '-5px',
+                            backgroundColor: '#ff6b6b',
+                            color: '#fff',
+                            fontSize: '0.7rem',
+                            fontWeight: '700',
+                            width: '16px',
+                            height: '16px',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
+                            border: '1px solid var(--color-dark--1)'
+                          }}>
+                            {invites.length}
+                          </span>
+                        )}
+                      </span>
+                      Notifications
+                    </button>
                     <button
                       className={styles.dropdownItem}
                       onClick={handleSettingsClick}

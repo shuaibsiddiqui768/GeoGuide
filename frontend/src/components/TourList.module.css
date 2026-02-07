@@ -1,0 +1,373 @@
+.tourList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.createBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, var(--color-brand--2), var(--color-brand--1));
+    color: var(--color-dark--0);
+    border: none;
+    border-radius: 10px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.createBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.icon {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+/* Form Styles */
+.form {
+    background: var(--color-dark--2);
+    padding: 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    border: 1px solid var(--color-dark--1);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.inputGroup label {
+    font-size: 1.2rem;
+    color: #ddd;
+    font-weight: 500;
+}
+
+.inputGroup input,
+.inputGroup textarea {
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    border: 2px solid var(--color-dark--1);
+    background: var(--color-dark--1);
+    color: #fff;
+    font-size: 1.3rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    resize: none;
+}
+
+.inputGroup input:focus,
+.inputGroup textarea:focus {
+    outline: none;
+    border-color: var(--color-brand--2);
+    background: var(--color-dark--0);
+}
+
+.inputGroup input::placeholder,
+.inputGroup textarea::placeholder {
+    color: #888;
+}
+
+.error {
+    font-size: 1.2rem;
+    color: #ff6b6b;
+    padding: 0.5rem;
+    background: rgba(255, 107, 107, 0.1);
+    border-radius: 6px;
+    text-align: center;
+}
+
+/* Date Row Styles */
+.dateRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.datePicker {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    border: 2px solid var(--color-dark--1);
+    background: var(--color-dark--1);
+    color: var(--color-light--1);
+    font-size: 1.3rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.datePicker:focus {
+    outline: none;
+    border-color: var(--color-brand--2);
+    background: var(--color-dark--0);
+}
+
+/* Budget Row Styles */
+.budgetRow {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1rem;
+}
+
+.budgetInput {
+    width: 100%;
+}
+
+.currencySelect {
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    border: 2px solid var(--color-dark--1);
+    background: var(--color-dark--1);
+    color: var(--color-light--1);
+    font-size: 1.3rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.currencySelect:focus {
+    outline: none;
+    border-color: var(--color-brand--2);
+    background: var(--color-dark--0);
+}
+
+.submitBtn {
+    padding: 1rem 1.5rem;
+    background: var(--color-brand--2);
+    color: var(--color-dark--0);
+    border: none;
+    border-radius: 8px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.submitBtn:hover:not(:disabled) {
+    background: var(--color-brand--1);
+}
+
+.submitBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Tours List */
+.list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 28rem);
+    padding-right: 0.5rem;
+}
+
+.list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.list::-webkit-scrollbar-track {
+    background: var(--color-dark--1);
+    border-radius: 4px;
+}
+
+.list::-webkit-scrollbar-thumb {
+    background: var(--color-dark--2);
+    border-radius: 4px;
+}
+
+.list::-webkit-scrollbar-thumb:hover {
+    background: var(--color-light--3);
+}
+
+/* Friend Picker Styles */
+.friendPicker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 0.5rem;
+    max-height: 12rem;
+    overflow-y: auto;
+    padding: 0.5rem;
+    background: var(--color-dark--1);
+    border-radius: 8px;
+}
+
+.friendChip {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.5rem 1rem;
+    background: var(--color-dark--2);
+    border: 1px solid var(--color-dark--1);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.friendChip:hover {
+    background: var(--color-dark--0);
+    border-color: var(--color-brand--2);
+}
+
+.friendChip.selected {
+    background: var(--color-brand--2);
+    border-color: var(--color-brand--1);
+    color: var(--color-dark--0);
+}
+
+.friendImg {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.friendInitial {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    background: var(--color-brand--1);
+    color: var(--color-dark--0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.selected .friendInitial {
+    background: var(--color-dark--0);
+    color: var(--color-brand--2);
+}
+
+.friendName {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* Invitation Styles */
+.invitesSection {
+    margin-bottom: 2rem;
+}
+
+.sectionTitle {
+    font-size: 1.4rem;
+    color: #fff;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-dark--1);
+}
+
+.invitesList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.inviteCard {
+    background: var(--color-dark--2);
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--color-dark--1);
+    transition: all 0.3s ease;
+}
+
+.inviteCard:hover {
+    border-color: var(--color-brand--2);
+}
+
+.inviteInfo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.inviteIcon {
+    font-size: 2rem;
+    background: var(--color-dark--1);
+    padding: 0.5rem;
+    border-radius: 8px;
+}
+
+.inviteName {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+}
+
+.inviteSender {
+    font-size: 1.1rem;
+    color: #bbb;
+    margin: 0.2rem 0 0 0;
+}
+
+.inviteSender strong {
+    color: var(--color-brand--2);
+}
+
+.inviteActions {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.acceptBtn {
+    background: var(--color-brand--2);
+    color: var(--color-dark--0);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.acceptBtn:hover {
+    background: var(--color-brand--1);
+}
+
+.rejectBtn {
+    background: rgba(255, 107, 107, 0.15);
+    color: #ff6b6b;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.rejectBtn:hover {
+    background: rgba(255, 107, 107, 0.25);
+}

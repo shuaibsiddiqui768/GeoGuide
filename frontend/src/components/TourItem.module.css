@@ -1,0 +1,122 @@
+.tourItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--color-dark--2);
+    border-radius: 10px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.tourItem:hover {
+    border-color: var(--color-brand--2);
+    background: var(--color-dark--1);
+}
+
+.tourLink {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.tourIcon {
+    font-size: 2.4rem;
+    background: var(--color-dark--1);
+    padding: 0.8rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tourInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.tourName {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+}
+
+.tourDescription {
+    font-size: 1.1rem;
+    color: #aaa;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.cityCount {
+    font-size: 1.1rem;
+    color: #00c46a;
+    font-weight: 600;
+}
+
+/* Delete Button */
+.deleteBtn {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 0.6rem;
+    opacity: 0.6;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+}
+
+.deleteBtn:hover {
+    opacity: 1;
+    background: rgba(255, 107, 107, 0.15);
+}
+
+/* Confirm Delete */
+.confirmDelete {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.confirmBtn,
+.cancelBtn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem 0.7rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.confirmBtn {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+}
+
+.confirmBtn:hover:not(:disabled) {
+    background: rgba(46, 204, 113, 0.3);
+}
+
+.confirmBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cancelBtn {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+}
+
+.cancelBtn:hover {
+    background: rgba(255, 107, 107, 0.3);
+}

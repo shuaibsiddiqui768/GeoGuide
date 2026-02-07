@@ -3,13 +3,14 @@
   max-height: 70%;
   background-color: var(--color-dark--2);
   border-radius: 7px;
-  /* overflow: scroll; */
+  overflow-y: auto;
 
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
+
 .emoji {
   font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
 }
@@ -47,4 +48,183 @@
 .city a:visited {
   font-size: 1.6rem;
   color: var(--color-brand--1);
+}
+
+/* Photo Header */
+.photoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.photoHeader h6 {
+  margin: 0;
+}
+
+.addPhotoBtn {
+  background: linear-gradient(135deg, var(--color-brand--2), var(--color-brand--1));
+  color: var(--color-dark--0);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.addPhotoBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.noPhotos {
+  color: #888;
+  font-size: 1.3rem;
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
+/* Image Gallery Styles */
+.imageGallery {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+
+.imageThumb {
+  width: 100px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.imageThumb:hover {
+  border-color: var(--color-brand--2);
+  transform: scale(1.05);
+}
+
+.imageThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Image Modal/Lightbox */
+.imageModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+  cursor: pointer;
+}
+
+.modalContent {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.modalContent img {
+  max-width: 100%;
+  max-height: 85vh;
+  border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.closeModal {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-brand--2);
+  color: var(--color-dark--0);
+  border: none;
+  font-size: 1.4rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.closeModal:hover {
+  background: var(--color-brand--1);
+  transform: scale(1.1);
+}
+
+/* Scrollbar for city component */
+.city::-webkit-scrollbar {
+  width: 8px;
+}
+
+.city::-webkit-scrollbar-track {
+  background: var(--color-dark--1);
+  border-radius: 4px;
+}
+
+.city::-webkit-scrollbar-thumb {
+  background: var(--color-brand--2);
+  border-radius: 4px;
+}
+
+.city::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand--1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .imageThumb {
+    width: 80px;
+    height: 65px;
+  }
+
+  .modalContent img {
+    max-height: 70vh;
+  }
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.btn {
+  text-transform: uppercase;
+  font-family: inherit;
+  font-size: 1.4rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.editBtn {
+  background-color: var(--color-brand--2);
+  color: var(--color-dark--0);
+  padding: 0.8rem 1.6rem;
+}
+
+.editBtn:hover {
+  background-color: var(--color-brand--1);
 }
