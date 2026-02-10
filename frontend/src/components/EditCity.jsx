@@ -1,18 +1,21 @@
 import { useEffect, useState, useRef } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import styles from "./Form.module.css";
 import Button from "./Button";
 import Spinner from "../components/Spinner";
 import { useCities } from "../contexts/CitiesContext";
+import { useTours } from "../contexts/ToursContext";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
 function EditCity({ onCancel }) {
   const { id } = useParams();
   const { currentCity, updateCity, isLoading } = useCities();
+  const { tours, addCityToTour, removeCityFromTour } = useTours();
+  const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
   const [date, setDate] = useState(new Date());
@@ -25,14 +28,25 @@ function EditCity({ onCancel }) {
   const [newImages, setNewImages] = useState([]); // File objects
   const [newPreviews, setNewPreviews] = useState([]); // Base64 strings
 
+  // Trip management state
+  const [selectedTourId, setSelectedTourId] = useState("");
+  const [initialTourId, setInitialTourId] = useState("");
+
   // Set form state when currentCity loads
   useEffect(() => {
     if (currentCity) {
       if (currentCity.date) setDate(new Date(currentCity.date));
       if (currentCity.notes) setNotes(currentCity.notes);
       if (currentCity.images) setExistingImages(currentCity.images);
+      
+      // Find which tour this city belongs to (if any)
+      const currentTour = tours.find(t => t.cities.some(c => (c._id || c) === id));
+      if (currentTour) {
+        setSelectedTourId(currentTour._id);
+        setInitialTourId(currentTour._id);
+      }
     }
-  }, [currentCity]);
+  }, [currentCity, tours, id]);
 
   // Convert file to base64
   function fileToBase64(file) {
@@ -147,6 +161,28 @@ function EditCity({ onCancel }) {
       };
 
       await updateCity(id, updatedData);
+
+      // Handle trip changes
+      if (selectedTourId !== initialTourId) {
+        // Remove from old tour if it existed
+        if (initialTourId) {
+          try {
+            await removeCityFromTour(initialTourId, id);
+          } catch (err) {
+            console.error("Failed to remove city from old tour:", err);
+          }
+        }
+        
+        // Add to new tour if selected
+        if (selectedTourId) {
+          try {
+            await addCityToTour(selectedTourId, id);
+          } catch (err) {
+            console.error("Failed to add city to new tour:", err);
+          }
+        }
+      }
+
       onCancel?.();
     } catch (err) {
         console.error("Update failed", err);
@@ -258,6 +294,36 @@ function EditCity({ onCancel }) {
               <span>+</span> Add Photos
             </label>
           </div>
+        )}
+      </div>
+
+      {/* Trip / Tour Selection Section */}
+      <div className={styles.row}>
+        <label htmlFor="tour">
+          <span className={styles.tourIcon}>🗺️</span> Trip / Tour (optional)
+        </label>
+        
+        {tours.length > 0 ? (
+          <select
+            id="tour"
+            value={selectedTourId}
+            onChange={(e) => setSelectedTourId(e.target.value)}
+            className={styles.select}
+          >
+            <option value="">-- No Tour --</option>
+            {tours.map((tour) => (
+              <option key={tour._id} value={tour._id}>
+                {tour.name} ({tour.cities?.length || 0} stops)
+              </option>
+            ))}
+          </select>
+        ) : (
+          <p className={styles.noToursMessage}>
+            No trips found. Create a trip in the 
+            <span style={{color: "var(--color-brand--2)", cursor: "pointer", marginLeft: "4px"}} onClick={() => navigate("/app/tours")}>
+              Trips section
+            </span> first.
+          </p>
         )}
       </div>
 

@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./TourItem.module.css";
 import { useTours } from "../contexts/ToursContext";
+import { useCities } from "../contexts/CitiesContext";
 
 function TourItem({ tour }) {
   const { deleteTour } = useTours();
+  const { refetchCities } = useCities();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -14,6 +16,8 @@ function TourItem({ tour }) {
     setIsDeleting(true);
     try {
       await deleteTour(tour._id);
+      // Immediately refresh cities list to remove deleted pins
+      if (refetchCities) refetchCities();
     } catch (err) {
       console.error("Failed to delete tour:", err);
     } finally {

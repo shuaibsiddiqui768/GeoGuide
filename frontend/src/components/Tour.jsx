@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import styles from "./Tour.module.css";
 import { useTours } from "../contexts/ToursContext";
 import { useAuth } from "../contexts/AuthContext";
+import { useSocial } from "../contexts/SocialContext";
 import Spinner from "./Spinner";
 import Message from "./Message";
 import BackButton from "./BackButton";
@@ -10,10 +11,24 @@ import BackButton from "./BackButton";
 function Tour() {
   const { id } = useParams();
   const { user } = useAuth();
-  const { currentTour, getTour, isLoading, removeCityFromTour, setActiveTour, respondToInvite } = useTours();
+  const { friends, fetchFriends } = useSocial();
+  const { 
+    currentTour, 
+    getTour, 
+    isLoading, 
+    removeCityFromTour, 
+    setActiveTour, 
+    respondToInvite,
+    inviteToTour
+  } = useTours();
+
+  const [isInviting, setIsInviting] = useState(false);
+  const [inviteError, setInviteError] = useState("");
+  const [inviteLoading, setInviteLoading] = useState(null);
 
   useEffect(() => {
     getTour(id);
+    fetchFriends();
     // Set this as active tour to show route on map
     setActiveTour?.(id);
     
@@ -21,7 +36,24 @@ function Tour() {
       // Clear active tour when leaving
       setActiveTour?.(null);
     };
-  }, [id, getTour, setActiveTour]);
+  }, [id, getTour, setActiveTour, fetchFriends]);
+
+  const isOwner = user && currentTour && (
+    (user._id && (user._id === currentTour.user?._id || user._id === currentTour.user)) ||
+    (user.id && (user.id === currentTour.user?._id || user.id === currentTour.user))
+  );
+
+  async function handleInviteFriend(friendId) {
+    try {
+      setInviteLoading(friendId);
+      setInviteError("");
+      await inviteToTour(currentTour._id, friendId);
+    } catch (err) {
+      setInviteError(err.message || "Failed to send invite");
+    } finally {
+      setInviteLoading(null);
+    }
+  }
 
   async function handleRemoveCity(e, cityId) {
     e.preventDefault();
@@ -151,7 +183,58 @@ function Tour() {
             {/* Accepted Mates */}
             {allMates.length > 0 && (
               <div className={styles.section}>
-                <h3 className={styles.sectionTitle}>👥 Trip Mates</h3>
+                <div className={styles.sectionHeader}>
+                  <h3 className={styles.sectionTitle}>👥 Trip Mates</h3>
+                  {isOwner && (
+                    <button 
+                      className={styles.addParticipantBtn}
+                      onClick={() => setIsInviting(!isInviting)}
+                    >
+                      {isInviting ? "Close" : "+ Invite Friend"}
+                    </button>
+                   )}
+                </div>
+
+                {isInviting && (
+                   <div className={styles.inviteFriendSection}>
+                     <h4>Select a friend to invite</h4>
+                     {inviteError && <p className={styles.inviteError}>{inviteError}</p>}
+                     <div className={styles.friendsListSmall}>
+                       {friends.length === 0 ? (
+                         <p className={styles.noFriends}>No friends found. Add some friends first!</p>
+                       ) : (
+                         friends.map(friend => {
+                           const isAlreadyMember = currentTour.participants.some(p => (p._id || p) === friend._id) || 
+                                                  currentTour.pendingInvites.some(p => (p._id || p) === friend._id);
+                           const isOwnerOfTrip = (currentTour.user?._id || currentTour.user) === friend._id;
+
+                           if (isOwnerOfTrip) return null;
+
+                           return (
+                             <div key={friend._id} className={styles.friendMiniCard}>
+                               <div className={styles.friendInfoMini}>
+                                 {friend.profileImage ? (
+                                   <img src={friend.profileImage} alt={friend.name} className={styles.friendImgMini} />
+                                 ) : (
+                                   <div className={styles.friendInitialMini}>{friend.name[0]}</div>
+                                 )}
+                                 <span className={styles.friendNameMini}>{friend.name}</span>
+                               </div>
+                               <button 
+                                 className={styles.miniInviteBtn}
+                                 disabled={isAlreadyMember || inviteLoading === friend._id}
+                                 onClick={() => handleInviteFriend(friend._id)}
+                               >
+                                 {inviteLoading === friend._id ? "..." : isAlreadyMember ? "Sent" : "Invite"}
+                               </button>
+                             </div>
+                           )
+                         })
+                       )}
+                     </div>
+                   </div>
+                )}
+
                 <div className={styles.participantsList}>
                   {allMates.map((person) => (
                     <div key={person._id} className={styles.participant} title={person.name}>

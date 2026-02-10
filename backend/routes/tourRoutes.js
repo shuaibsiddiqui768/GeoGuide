@@ -9,6 +9,7 @@ const {
     removeCityFromTour,
     getInvites,
     respondToInvite,
+    inviteToTour,
 } = require("../controllers/tourController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -25,6 +26,7 @@ router.get("/:id", getTour);
 router.post("/", createTour);
 router.put("/:id", updateTour);
 router.delete("/:id", deleteTour);
+router.post("/:id/invite", inviteToTour);
 
 // City management routes
 router.post("/:id/cities", addCityToTour);

@@ -31,14 +31,14 @@ function ToursProvider({ children }) {
   }, []);
 
   // Fetch all tours for the user
-  const fetchTours = useCallback(async () => {
+  const fetchTours = useCallback(async (isSilent = false) => {
     if (!isAuthenticated) {
       setTours([]);
       return;
     }
 
     try {
-      setIsLoading(true);
+      if (!isSilent) setIsLoading(true);
       setError(null);
       const res = await fetch(`${BASE_URL}/tours`, {
         headers: getAuthHeaders(),
@@ -56,7 +56,7 @@ function ToursProvider({ children }) {
       console.error(e);
       setError(e.message || "Failed to load tours");
     } finally {
-      setIsLoading(false);
+      if (!isSilent) setIsLoading(false);
     }
   }, [isAuthenticated, getAuthHeaders]);
 
@@ -80,16 +80,19 @@ function ToursProvider({ children }) {
     }
   }, [isAuthenticated, getAuthHeaders]);
 
-  // Fetch tours on mount and auth change
+  // Fetch tours and invites on mount, auth change, and poll
   useEffect(() => {
     fetchTours();
     fetchInvites();
-    
-    // Poll for invites globally
+
+    // Poll for updates (collab changes, new invites) - silent refresh
     const interval = setInterval(() => {
-        if (isAuthenticated) fetchInvites();
-    }, 5000);
-    
+      if (isAuthenticated) {
+        fetchTours(true);
+        fetchInvites();
+      }
+    }, 10000);
+
     return () => clearInterval(interval);
   }, [fetchTours, fetchInvites, isAuthenticated]);
 
@@ -293,6 +296,41 @@ function ToursProvider({ children }) {
     [isAuthenticated, getAuthHeaders, fetchInvites, fetchTours]
   );
 
+  // Invite a friend to a tour
+  const inviteToTour = useCallback(
+    async (tourId, friendId) => {
+      if (!isAuthenticated) return;
+
+      try {
+        setIsLoading(true);
+        const res = await fetch(`${BASE_URL}/tours/${tourId}/invite`, {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify({ friendId }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.message || `HTTP ${res.status}`);
+        
+        // Update local state for current tour if it's the one we're viewing
+        if (currentTour?._id === tourId) {
+          setCurrentTour(data);
+        }
+        
+        // Update tours list
+        setTours(prev => prev.map(t => t._id === tourId ? data : t));
+        
+        return data;
+      } catch (e) {
+        console.error("Invite to tour error:", e);
+        setError(e.message || "Failed to send invitation");
+        throw e;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [isAuthenticated, getAuthHeaders, currentTour]
+  );
+
   return (
     <ToursContext.Provider
       value={{
@@ -312,6 +350,7 @@ function ToursProvider({ children }) {
         invites,
         fetchInvites,
         respondToInvite,
+        inviteToTour,
       }}
     >
       {children}

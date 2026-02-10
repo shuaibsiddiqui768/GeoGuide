@@ -6,6 +6,8 @@ import Spinner from "../components/Spinner";
 import BackButton from "./BackButton";
 import EditCity from "./EditCity";
 
+import { useAuth } from "../contexts/AuthContext";
+
 const API_BASE = import.meta.env.VITE_API_URL;
 
 const formatDate = (date) => {
@@ -22,7 +24,14 @@ const formatDate = (date) => {
 
 function City() {
   const { id } = useParams();
+  const { user: authUser } = useAuth();
   const { getCity, currentCity, isLoading, updateCity } = useCities();
+  
+  // Check if current user is the owner
+  const isOwner = authUser && currentCity && (
+    (authUser._id && (authUser._id === currentCity.user || authUser._id === currentCity.user?._id)) ||
+    (authUser.id && (authUser.id === currentCity.user || authUser.id === currentCity.user?._id))
+  );
   const [selectedImage, setSelectedImage] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -139,7 +148,7 @@ function City() {
       <div className={styles.row}>
         <div className={styles.photoHeader}>
           <h6>Photos {images?.length > 0 && `(${images.length}/5)`}</h6>
-          {canAddMore && (
+          {isOwner && canAddMore && (
             <label className={styles.addPhotoBtn}>
               <input
                 type="file"
@@ -205,12 +214,14 @@ function City() {
 
       {/* Action Buttons */}
       <div className={styles.buttons}>
-        <button 
-            className={`${styles.btn} ${styles.editBtn}`}
-            onClick={() => setIsEditing(true)}
-        >
-            ✏️ Edit City
-        </button>
+        {isOwner && (
+          <button 
+              className={`${styles.btn} ${styles.editBtn}`}
+              onClick={() => setIsEditing(true)}
+          >
+              ✏️ Edit City
+          </button>
+        )}
         <BackButton />
       </div>
     </div>

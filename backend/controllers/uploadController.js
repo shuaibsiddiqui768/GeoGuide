@@ -1,5 +1,6 @@
 const cloudinary = require("../config/cloudinary");
 const User = require("../models/User");
+const { deleteImagesFromCloudinary } = require("../utils/cloudinaryHelper");
 
 // Upload profile image to Cloudinary
 exports.uploadProfileImage = async (req, res) => {
@@ -10,7 +11,17 @@ exports.uploadProfileImage = async (req, res) => {
             return res.status(400).json({ message: "No image provided" });
         }
 
-        // Upload to Cloudinary
+        // 1. If user already has an image, delete it from Cloudinary
+        if (req.user.profileImage) {
+            console.log("Replacing profile image, deleting old one:", req.user.profileImage);
+            try {
+                await deleteImagesFromCloudinary(req.user.profileImage);
+            } catch (err) {
+                console.error("Failed to delete old profile image from Cloudinary:", err);
+            }
+        }
+
+        // 2. Upload new to Cloudinary
         const uploadResponse = await cloudinary.uploader.upload(image, {
             folder: "geoguide/profiles",
             width: 300,
@@ -21,7 +32,7 @@ exports.uploadProfileImage = async (req, res) => {
             format: "webp",
         });
 
-        // Update user's profile image in database
+        // 3. Update user's profile image in database
         const user = await User.findByIdAndUpdate(
             req.user._id,
             { profileImage: uploadResponse.secure_url },
@@ -52,6 +63,17 @@ exports.uploadProfileImage = async (req, res) => {
 // Remove profile image
 exports.removeProfileImage = async (req, res) => {
     try {
+        // 1. Delete from Cloudinary if it exists
+        if (req.user.profileImage) {
+            console.log("Removing profile image from Cloudinary:", req.user.profileImage);
+            try {
+                await deleteImagesFromCloudinary(req.user.profileImage);
+            } catch (err) {
+                console.error("Failed to delete profile image from Cloudinary:", err);
+            }
+        }
+
+        // 2. Clear from database
         const user = await User.findByIdAndUpdate(
             req.user._id,
             { profileImage: "" },

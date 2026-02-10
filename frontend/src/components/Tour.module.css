@@ -2,8 +2,26 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    padding: 0.5rem;
+    padding: 1rem;
     height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-dark--0) transparent;
+}
+
+.tour::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tour::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tour::-webkit-scrollbar-thumb {
+    background: var(--color-dark--0);
+    border-radius: 10px;
 }
 
 .header {
@@ -91,10 +109,10 @@
     background: var(--color-dark--2);
     padding: 1.5rem;
     border-radius: 12px;
-    flex: 1;
     display: flex;
     flex-direction: column;
-    min-height: 0;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .sectionTitle {
@@ -280,7 +298,7 @@
 }
 
 .cityList::-webkit-scrollbar-thumb:hover {
-    background: var(--color-light--3);
+    background: var(--color-brand--2);
 }
 
 /* Participants Styles */
@@ -288,41 +306,63 @@
     display: flex;
     flex-wrap: wrap;
     gap: 1.5rem;
-    padding: 0.5rem 0;
+    padding: 1rem 0;
+}
+
+/* Custom Scrollbar for Participants List */
+.participantsList::-webkit-scrollbar {
+    width: 6px;
+}
+
+.participantsList::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.participantsList::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
 }
 
 .participant {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    width: 6rem;
+    gap: 0.8rem;
+    width: 6.5rem;
+    transition: transform 0.2s ease;
+}
+
+.participant:hover {
+    transform: translateY(-5px);
 }
 
 .participantImg {
-    width: 4rem;
-    height: 4rem;
+    width: 5rem;
+    height: 5rem;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--color-brand--2);
+    border: 3px solid var(--color-brand--2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .participantInitial {
-    width: 4rem;
-    height: 4rem;
+    width: 5rem;
+    height: 5rem;
     border-radius: 50%;
-    background: var(--color-brand--1);
+    background: linear-gradient(135deg, var(--color-brand--2), var(--color-brand--1));
     color: var(--color-dark--0);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    font-size: 1.8rem;
-    border: 2px solid var(--color-brand--2);
+    font-weight: 800;
+    font-size: 2rem;
+    border: 3px solid var(--color-brand--2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .participantName {
-    font-size: 1rem;
+    font-size: 1.1rem;
+    font-weight: 500;
     color: #fff;
     text-align: center;
     white-space: nowrap;
@@ -333,43 +373,45 @@
 
 .ownerImg {
     border-color: #ffd700;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
 }
 
 .ownerInitial {
-    background: #ffd700;
-    color: var(--color-dark--2);
+    background: linear-gradient(135deg, #ffd700, #ffae00);
+    color: var(--color-dark--1);
     border-color: #ffd700;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
 }
 
 .pendingParticipant {
-    opacity: 0.7;
+    filter: grayscale(0.6) blur(0.3px);
 }
 
 .pendingParticipant .participantName {
     font-style: italic;
-    color: #bbb;
+    color: #888;
 }
 
 /* Invitation Banner */
 .inviteBanner {
-    background: var(--color-dark--1);
+    background: linear-gradient(to right, var(--color-dark--1), var(--color-dark--0));
     border: 1px solid var(--color-brand--2);
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
+    padding: 1.2rem 2rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    animation: slideDown 0.3s ease;
+    animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 
 .inviteBanner p {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     color: #fff;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 0.3px;
 }
 
 .bannerActions {
@@ -417,4 +459,186 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Trip Invitation Styles */
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sectionHeader .sectionTitle {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.addParticipantBtn {
+    background: transparent;
+    color: var(--color-brand--2);
+    border: 1px solid var(--color-brand--2);
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.addParticipantBtn:hover {
+    background: var(--color-brand--2);
+    color: var(--color-dark--0);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(234, 140, 85, 0.3);
+}
+
+.inviteFriendSection {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    animation: slideDown 0.3s ease-out;
+}
+
+.inviteFriendSection h4 {
+    font-size: 1.2rem;
+    color: #eee;
+    margin: 0 0 1.2rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.inviteFriendSection h4::before {
+    content: "📢";
+    font-size: 1.4rem;
+}
+
+.friendsListSmall {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    max-height: 240px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Custom Scrollbar for Invitation List */
+.friendsListSmall::-webkit-scrollbar {
+    width: 6px;
+}
+
+.friendsListSmall::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.friendsListSmall::-webkit-scrollbar-thumb {
+    background: var(--color-brand--2);
+    border-radius: 10px;
+    transition: background 0.3s;
+}
+
+.friendsListSmall::-webkit-scrollbar-thumb:hover {
+    background: var(--color-brand--1);
+}
+
+.friendMiniCard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color-dark--1);
+    padding: 1rem 1.2rem;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.friendMiniCard:hover {
+    background: var(--color-dark--0);
+    border-color: rgba(234, 140, 85, 0.2);
+    transform: translateX(4px);
+}
+
+.friendInfoMini {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.friendImgMini {
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-brand--2);
+}
+
+.friendInitialMini {
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-brand--2), var(--color-brand--1));
+    color: var(--color-dark--0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.4rem;
+}
+
+.friendNameMini {
+    font-size: 1.3rem;
+    color: #fff;
+    font-weight: 500;
+}
+
+.miniInviteBtn {
+    background: var(--color-brand--2);
+    color: var(--color-dark--0);
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.miniInviteBtn:hover:not(:disabled) {
+    background: var(--color-brand--1);
+    transform: scale(1.05);
+}
+
+.miniInviteBtn:disabled {
+    background: var(--color-dark--0);
+    color: rgba(255, 255, 255, 0.3);
+    cursor: not-allowed;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.inviteError {
+    background: rgba(255, 107, 107, 0.1);
+    color: #ff6b6b;
+    font-size: 1.1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.2rem;
+    border-left: 3px solid #ff6b6b;
+}
+
+.noFriends {
+    font-size: 1.2rem;
+    color: #888;
+    text-align: center;
+    padding: 2.5rem 1rem;
+    background: var(--color-dark--1);
+    border-radius: 10px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
 }

@@ -36,7 +36,7 @@ function CitiesProvider({ children }) {
   }, []);
 
   // Fetch cities for the logged-in user
-  const fetchCities = useCallback(async () => {
+  const fetchCities = useCallback(async (isSilent = false) => {
     // Only fetch if user is authenticated
     if (!isAuthenticated) {
       setCities([]);
@@ -44,7 +44,7 @@ function CitiesProvider({ children }) {
     }
 
     try {
-      setIsLoading(true);
+      if (!isSilent) setIsLoading(true);
       setError(null);
       const res = await fetch(`${BASE_URL}/cities`, {
         headers: getAuthHeaders(),
@@ -64,14 +64,21 @@ function CitiesProvider({ children }) {
       console.error(e);
       setError(e.message || "Failed to load cities");
     } finally {
-      setIsLoading(false);
+      if (!isSilent) setIsLoading(false);
     }
   }, [isAuthenticated, getAuthHeaders, parseJsonSafe]);
 
-  // Fetch cities when user authentication changes
+  // Fetch cities on mount, auth change, and poll every 10 seconds for collab sync
   useEffect(() => {
     fetchCities();
-  }, [fetchCities, user]);
+
+    // Polling for collaborative updates (silent refresh)
+    const interval = setInterval(() => {
+      if (isAuthenticated) fetchCities(true);
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [fetchCities, isAuthenticated]);
 
   // Memoize getCity so consumers can safely include it in useEffect deps
   const getCity = useCallback(

@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { deleteImagesFromCloudinary } = require("../utils/cloudinaryHelper");
 
 const createToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -152,11 +153,35 @@ exports.deleteAccount = async (req, res) => {
       return res.status(400).json({ message: "Password is incorrect" });
     }
 
-    // Delete user's cities first
+    // 1. Delete user's profile image from Cloudinary if it exists
+    if (user.profileImage) {
+      console.log("Deleting profile image during account deletion:", user.profileImage);
+      try {
+        await deleteImagesFromCloudinary(user.profileImage);
+      } catch (err) {
+        console.error("Failed to delete profile image during account deletion:", err);
+      }
+    }
+
+    // 2. Delete user's cities and their images from Cloudinary
     const City = require("../models/City");
+    const userCities = await City.find({ user: req.user._id });
+    const cityImages = userCities.flatMap(c => c.images || []);
+
+    if (cityImages.length > 0) {
+      try {
+        await deleteImagesFromCloudinary(cityImages);
+      } catch (err) {
+        console.error("Failed to delete user city images during account deletion:", err);
+      }
+    }
     await City.deleteMany({ user: req.user._id });
 
-    // Delete user
+    // 3. Delete user's tours (this logic might need refinement if tours have participants)
+    const Tour = require("../models/Tour");
+    await Tour.deleteMany({ user: req.user._id });
+
+    // 4. Delete user
     await User.findByIdAndDelete(req.user._id);
 
     res.status(200).json({ message: "Account deleted successfully" });

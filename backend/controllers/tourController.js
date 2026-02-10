@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Tour = require("../models/Tour");
 const User = require("../models/User");
+const City = require("../models/City");
+const { deleteImagesFromCloudinary } = require("../utils/cloudinaryHelper");
 
 // Get all tours for the logged-in user or a friend
 exports.getTours = async (req, res) => {
@@ -143,8 +145,29 @@ exports.deleteTour = async (req, res) => {
             return res.status(404).json({ message: "Tour not found" });
         }
 
-        // If user is owner, delete the whole thing
+        // If user is owner, delete the tour AND all associated cities
         if (tour.user.toString() === req.user._id.toString()) {
+            console.log(`Owner deleting tour ${req.params.id}. Associated cities:`, tour.cities);
+
+            // Delete all cities that were part of this tour
+            if (tour.cities && tour.cities.length > 0) {
+                // Fetch cities to get their images before deletion
+                const citiesToDelete = await City.find({ _id: { $in: tour.cities } });
+                const allImageUrls = citiesToDelete.flatMap(c => c.images || []);
+
+                if (allImageUrls.length > 0) {
+                    console.log(`Deleting ${allImageUrls.length} city images from Cloudinary for tour ${req.params.id}`);
+                    try {
+                        await deleteImagesFromCloudinary(allImageUrls);
+                    } catch (cloudinaryErr) {
+                        console.error("Failed to delete tour city images from Cloudinary:", cloudinaryErr);
+                    }
+                }
+
+                const deleteResult = await City.deleteMany({ _id: { $in: tour.cities } });
+                console.log(`Deleted ${deleteResult.deletedCount} cities associated with tour.`);
+            }
+
             await Tour.findByIdAndDelete(req.params.id);
             return res.status(204).send();
         }
@@ -298,5 +321,51 @@ exports.respondToInvite = async (req, res) => {
             message: "Internal Server Error responding to invitation",
             details: error.message
         });
+    }
+};
+
+// Invite someone to an existing tour
+exports.inviteToTour = async (req, res) => {
+    try {
+        const { friendId } = req.body;
+        const { id: tourId } = req.params;
+
+        if (!friendId) {
+            return res.status(400).json({ message: "Friend ID is required" });
+        }
+
+        const tour = await Tour.findOne({
+            _id: tourId,
+            user: req.user._id // Only owner can invite
+        });
+
+        if (!tour) {
+            return res.status(404).json({ message: "Tour not found or unauthorized" });
+        }
+
+        const friendObjectId = new mongoose.Types.ObjectId(friendId);
+
+        // Check if already a participant or already invited
+        const alreadyParticipant = tour.participants.some(p => p.toString() === friendId);
+        const alreadyInvited = tour.pendingInvites.some(p => p.toString() === friendId);
+
+        if (alreadyParticipant || alreadyInvited) {
+            return res.status(400).json({ message: "User is already part of or invited to this trip" });
+        }
+
+        // Add to pending invites
+        tour.pendingInvites.push(friendObjectId);
+        await tour.save();
+
+        const updatedTour = await Tour.findById(tourId)
+            .populate("cities")
+            .populate("participants", "name username profileImage")
+            .populate("pendingInvites", "name username profileImage")
+            .populate("user", "name username profileImage");
+
+        res.status(200).json(updatedTour);
+    } catch (error) {
+        console.error("Invite to tour error:", error);
+        res.status(500).json({ message: "Failed to send invitation" });
     }
 };

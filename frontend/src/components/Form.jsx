@@ -296,27 +296,35 @@ function Form() {
         )}
       </div>
 
-      {/* Tour Selection Dropdown */}
-      {tours.length > 0 && (
-        <div className={styles.row}>
-          <label htmlFor="tour">
-            <span className={styles.tourIcon}>🗺️</span> Add to Tour (optional)
-          </label>
+      {/* Tour Selection Section */}
+      <div className={styles.row}>
+        <label htmlFor="tour">
+          <span className={styles.tourIcon}>🗺️</span> Add to Trip / Tour (optional)
+        </label>
+        
+        {tours.length > 0 ? (
           <select
             id="tour"
             value={selectedTourId}
             onChange={(e) => setSelectedTourId(e.target.value)}
             className={styles.select}
           >
-            <option value="">-- Select a tour --</option>
+            <option value="">-- No Tour --</option>
             {tours.map((tour) => (
               <option key={tour._id} value={tour._id}>
-                {tour.name} ({tour.cities?.length || 0} cities)
+                {tour.name} ({tour.cities?.length || 0} stops)
               </option>
             ))}
           </select>
-        </div>
-      )}
+        ) : (
+          <p className={styles.noToursMessage}>
+            No trips found. Create a trip in the 
+            <span style={{color: "var(--color-brand--2)", cursor: "pointer", marginLeft: "4px"}} onClick={() => navigate("/app/tours")}>
+              Trips section
+            </span> first.
+          </p>
+        )}
+      </div>
 
       <div className={styles.buttons}>
         <Button type="primary" disabled={isSubmitting || isLoading}>

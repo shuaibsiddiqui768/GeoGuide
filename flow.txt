@@ -1,2 +1,0 @@
-app->slider->appnav->city/country->
-map click-> form(add city)->
