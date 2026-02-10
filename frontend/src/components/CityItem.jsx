@@ -33,7 +33,7 @@ function getCountryCodeFromEmoji(emoji) {
 function CityItem({ city }) {
   const { currentCity, deleteCity } = useCities();
 
-  const { cityName, emoji, date, _id, position, images } = city;
+  const { cityName, emoji, date, _id, position } = city;
 
   function handleClick(e) {
     e.preventDefault();
@@ -41,7 +41,6 @@ function CityItem({ city }) {
     deleteCity(_id);
   }
 
-  const hasImages = images && images.length > 0;
   const countryCode = getCountryCodeFromEmoji(emoji);
   
   // Flag image URL from flagcdn.com
@@ -57,15 +56,8 @@ function CityItem({ city }) {
         }`}
         to={`${_id}?lat=${position.lat}&lng=${position.lng}`}
       >
-        {/* Show thumbnail, flag image, or emoji fallback */}
-        {hasImages ? (
-          <div className={styles.thumbnail}>
-            <img src={images[0]} alt={cityName} />
-            {images.length > 1 && (
-              <span className={styles.imageCount}>+{images.length - 1}</span>
-            )}
-          </div>
-        ) : flagUrl ? (
+        {/* Always show flag image or emoji fallback in the list */}
+        {flagUrl ? (
           <div className={styles.flagContainer}>
             <img 
               src={flagUrl} 

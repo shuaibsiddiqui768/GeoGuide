@@ -18,7 +18,7 @@ function CitiesProvider({ children }) {
   const [error, setError] = useState(null);
 
   // Get auth state from AuthContext
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   // Helper to get auth headers
   const getAuthHeaders = useCallback(() => {

@@ -82,7 +82,7 @@ exports.getTour = async (req, res) => {
 // Create a new tour
 exports.createTour = async (req, res) => {
     try {
-        const { name, description, startDate, endDate, participants } = req.body;
+        const { name, description, startDate, endDate, budget, currency, participants } = req.body;
 
         if (!name) {
             return res.status(400).json({ message: "Tour name is required" });
@@ -98,6 +98,8 @@ exports.createTour = async (req, res) => {
             description,
             startDate,
             endDate,
+            budget: budget || 0,
+            currency: currency || "USD",
             user: req.user._id,
             cities: [],
             participants: [],
@@ -114,14 +116,14 @@ exports.createTour = async (req, res) => {
 // Update a tour
 exports.updateTour = async (req, res) => {
     try {
-        const { name, description, startDate, endDate } = req.body;
+        const { name, description, startDate, endDate, budget, currency } = req.body;
 
         const tour = await Tour.findOneAndUpdate(
             {
                 _id: req.params.id,
                 $or: [{ user: req.user._id }, { participants: req.user._id }],
             },
-            { name, description, startDate, endDate },
+            { name, description, startDate, endDate, budget, currency },
             { new: true }
         ).populate("cities").populate("participants", "name username profileImage");
 

@@ -22,6 +22,16 @@ const formatDate = (date) => {
   }).format(d);
 };
 
+// Helper to get flag emoji country code
+function getCountryCodeFromEmoji(emoji) {
+  if (!emoji) return null;
+  const codePoints = [...emoji]
+    .map(char => char.codePointAt(0))
+    .filter(cp => cp >= 127462 && cp <= 127487)
+    .map(cp => String.fromCharCode(cp - 127397));
+  return codePoints.length === 2 ? codePoints.join('').toLowerCase() : null;
+}
+
 function City() {
   const { id } = useParams();
   const { user: authUser } = useAuth();
@@ -128,7 +138,16 @@ function City() {
       <div className={styles.row}>
         <h6>City name</h6>
         <h3>
-          <span className={styles.emoji}>{emoji}</span> {cityName}
+          {getCountryCodeFromEmoji(emoji) ? (
+            <img 
+              src={`https://flagcdn.com/w40/${getCountryCodeFromEmoji(emoji)}.png`} 
+              alt="flag" 
+              className={styles.flagImage}
+            />
+          ) : (
+            <span className={styles.emoji}>{emoji}</span>
+          )}{" "}
+          {cityName}
         </h3>
       </div>
 

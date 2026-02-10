@@ -27,6 +27,37 @@
     gap: 0.5rem;
 }
 
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.inputWrapper input {
+    width: 100%;
+}
+
+.eyeButton {
+    position: absolute;
+    right: 1.2rem;
+    background: none;
+    border: none;
+    color: var(--color-brand--2);
+    /* Vibrant brand orange */
+    font-size: 2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.2s ease;
+}
+
+.eyeButton:hover {
+    color: var(--color-brand--1);
+    transform: scale(1.1);
+}
+
 .button {
     padding: 0.8rem 1.5rem;
     background-color: var(--color-brand--2);

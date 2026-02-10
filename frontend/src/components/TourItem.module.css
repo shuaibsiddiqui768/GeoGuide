@@ -58,10 +58,33 @@
     overflow: hidden;
 }
 
+.tourMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.3rem;
+}
+
+.dateRange,
+.budget,
 .cityCount {
     font-size: 1.1rem;
-    color: #00c46a;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.dateRange {
+    color: var(--color-light--3);
+}
+
+.budget {
+    color: var(--color-brand--1);
+}
+
+.cityCount {
+    color: #00c46a;
 }
 
 /* Delete Button */

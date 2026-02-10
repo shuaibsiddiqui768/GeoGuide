@@ -26,6 +26,16 @@ export function convertToEmoji(countryCode) {
 //reverse-geocoding API from lat and lng we find the country
 const BASE_URL = "https://api.bigdatacloud.net/data/reverse-geocode-client";
 
+// Helper to get flag emoji country code
+function getCountryCodeFromEmoji(emoji) {
+  if (!emoji) return null;
+  const codePoints = [...emoji]
+    .map(char => char.codePointAt(0))
+    .filter(cp => cp >= 127462 && cp <= 127487)
+    .map(cp => String.fromCharCode(cp - 127397));
+  return codePoints.length === 2 ? codePoints.join('').toLowerCase() : null;
+}
+
 function Form() {
   const [lat, lng] = useUrlPosition();
   const { createCity, isLoading } = useCities();
@@ -222,7 +232,15 @@ function Form() {
           value={cityName}
           placeholder="City"
         />
-        <span className={styles.flag}>{emoji}</span>
+        {getCountryCodeFromEmoji(emoji) ? (
+          <img 
+            src={`https://flagcdn.com/w40/${getCountryCodeFromEmoji(emoji)}.png`} 
+            alt="flag" 
+            className={styles.flagImage}
+          />
+        ) : (
+          <span className={styles.flag}>{emoji}</span>
+        )}
       </div>
 
       <div className={styles.row}>
@@ -234,7 +252,6 @@ function Form() {
           onChange={(val) => setDate(val)}
           selected={date}
           dateFormat="dd/MM/yyyy"
-          maxDate={new Date()}
           isClearable={false}
           placeholderText="Select date visited"
         />

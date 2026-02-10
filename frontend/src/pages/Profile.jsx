@@ -226,16 +226,16 @@ function Profile() {
                     className={styles.cityCard}
                     to={`/app/cities/${city._id}?lat=${city.position?.lat || 0}&lng=${city.position?.lng || 0}`}
                   >
-                    {city.images && city.images.length > 0 ? (
-                      <img src={city.images[0]} alt={city.cityName} className={styles.cityImage} />
-                    ) : flagUrl ? (
+                    {flagUrl ? (
                       <div className={styles.flagContainer}>
                         <img 
                           src={flagUrl} 
                           alt={`${city.country} flag`} 
                           className={styles.flagImage}
                           onError={(e) => {
+                            // Fallback to emoji if flag fails to load
                             e.target.style.display = 'none';
+                            e.target.parentElement.innerHTML = `<div class="${styles.cityEmoji}">${city.emoji}</div>`;
                           }}
                         />
                       </div>

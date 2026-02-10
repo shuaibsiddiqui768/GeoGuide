@@ -10,8 +10,8 @@ const userSchema = new mongoose.Schema(
     },
     username: {
       type: String,
+      required: [true, "Please enter a username"],
       unique: true,
-      sparse: true,
       lowercase: true,
       trim: true,
       minlength: [3, "Username must be at least 3 characters"],

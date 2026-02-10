@@ -1,17 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styles from "./UserProfile.module.css";
 import PageNav from "../components/PageNav";
 import Spinner from "../components/Spinner";
 import { useSocial } from "../contexts/SocialContext";
-import { useAuth } from "../contexts/AuthContext";
 
 const API_BASE = import.meta.env.VITE_API_URL;
+
+// Get country code from emoji flag
+function getCountryCodeFromEmoji(emoji) {
+  if (!emoji) return null;
+  const codePoints = [...emoji]
+    .map(char => char.codePointAt(0))
+    .filter(cp => cp >= 127462 && cp <= 127487)
+    .map(cp => String.fromCharCode(cp - 127397));
+  if (codePoints.length === 2) {
+    return codePoints.join('').toLowerCase();
+  }
+  return null;
+}
 
 function UserProfile() {
   const { identifier } = useParams();
   const navigate = useNavigate();
-  const { user: currentUser } = useAuth();
   const {
     getUserProfile,
     sendFriendRequest,
@@ -184,20 +195,20 @@ function UserProfile() {
     document.body.style.overflow = "hidden"; // Prevent scrolling
   }
 
-  function closeLightbox() {
+  const closeLightbox = useCallback(() => {
     setShowLightbox(false);
     document.body.style.overflow = "auto";
-  }
+  }, []);
 
-  function prevPhoto(e) {
-    e.stopPropagation();
+  const prevPhoto = useCallback((e) => {
+    e?.stopPropagation();
     setActiveIndex((prev) => (prev === 0 ? filteredPhotos.length - 1 : prev - 1));
-  }
+  }, [filteredPhotos.length]);
 
-  function nextPhoto(e) {
-    e.stopPropagation();
+  const nextPhoto = useCallback((e) => {
+    e?.stopPropagation();
     setActiveIndex((prev) => (prev === filteredPhotos.length - 1 ? 0 : prev + 1));
-  }
+  }, [filteredPhotos.length]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -209,7 +220,7 @@ function UserProfile() {
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [showLightbox]);
+  }, [showLightbox, prevPhoto, nextPhoto, closeLightbox]);
 
   function renderActionButton() {
     if (actionLoading) {
@@ -344,9 +355,9 @@ function UserProfile() {
         ) : (
           <div className={styles.content}>
             {/* Recent Trips */}
-            {tours.length > 0 && (
-              <div className={styles.section}>
-                <h2 className={styles.sectionTitle}>✈️ Recent Trips</h2>
+            <div className={styles.section}>
+              <h2 className={styles.sectionTitle}>✈️ Recent Trips</h2>
+              {tours.length > 0 ? (
                 <div className={styles.tripList}>
                   {tours.map(tour => (
                     <div key={tour._id} className={styles.tripCard}>
@@ -366,48 +377,64 @@ function UserProfile() {
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              ) : (
+                <p className={styles.noDataText}>No trips shared yet.</p>
+              )}
+            </div>
 
             {/* Cities Section */}
             {cities.length > 0 && (
               <div className={styles.section}>
                 <h2 className={styles.sectionTitle}>📍 Visited Cities</h2>
                 <div className={styles.cityGrid}>
-                  {cities.map((city) => (
-                    <div 
-                      key={city._id} 
-                      className={`${styles.cityCard} ${filterCity === city.cityName ? styles.selectedCity : ""}`}
-                      onClick={() => setFilterCity(city.cityName === filterCity ? null : city.cityName)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <span className={styles.cityEmoji}>{city.emoji}</span>
-                      <div className={styles.cityInfo}>
-                        <span className={styles.cityName}>{city.cityName}</span>
-                        <span className={styles.cityCountry}>{city.country}</span>
+                  {cities.map((city) => {
+                    const countryCode = getCountryCodeFromEmoji(city.emoji);
+                    const flagUrl = countryCode 
+                      ? `https://flagcdn.com/w80/${countryCode}.png`
+                      : null;
+
+                    return (
+                      <div 
+                        key={city._id} 
+                        className={`${styles.cityCard} ${filterCity === city.cityName ? styles.selectedCity : ""}`}
+                        onClick={() => setFilterCity(city.cityName === filterCity ? null : city.cityName)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {flagUrl ? (
+                          <div className={styles.flagContainerMini}>
+                            <img src={flagUrl} alt={city.country} className={styles.flagImgMini} />
+                          </div>
+                        ) : (
+                          <span className={styles.cityEmoji}>{city.emoji}</span>
+                        )}
+                        <div className={styles.cityInfo}>
+                          <span className={styles.cityName}>{city.cityName}</span>
+                          <span className={styles.cityCountry}>{city.country}</span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
 
             {/* Photos Section */}
-            {filteredPhotos.length > 0 && (
-              <div className={styles.section}>
-                <div className={styles.sectionTitleHeader}>
-                  <h2 className={styles.sectionTitle}>
-                    📸 Photos {filterCity && ` - ${filterCity}`}
-                  </h2>
-                  {filterCity && (
-                    <button 
-                      className={styles.clearFilterBtn}
-                      onClick={() => setFilterCity(null)}
-                    >
-                      Show All
-                    </button>
-                  )}
-                </div>
+            <div className={styles.section}>
+              <div className={styles.sectionTitleHeader}>
+                <h2 className={styles.sectionTitle}>
+                  📸 Photos {filterCity && ` - ${filterCity}`}
+                </h2>
+                {filterCity && (
+                  <button 
+                    className={styles.clearFilterBtn}
+                    onClick={() => setFilterCity(null)}
+                  >
+                    Show All
+                  </button>
+                )}
+              </div>
+              
+              {filteredPhotos.length > 0 ? (
                 <div className={styles.photoGrid}>
                   {filteredPhotos.map((photo, i) => (
                     <div key={i} className={styles.photoCard} onClick={() => openLightbox(i)}>
@@ -418,12 +445,16 @@ function UserProfile() {
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              ) : (
+                <p className={styles.noDataText}>
+                  {filterCity ? `No photos found for ${filterCity}.` : "No images uploaded yet."}
+                </p>
+              )}
+            </div>
 
             {cities.length === 0 && tours.length === 0 && (
               <div className={styles.empty}>
-                <p>No travel history shared yet.</p>
+                <p>No travel activity found for this user.</p>
               </div>
             )}
           </div>

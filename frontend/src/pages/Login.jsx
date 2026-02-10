@@ -1,5 +1,6 @@
-import styles from "./Login.module.css";
 import { useState } from "react";
+import { HiEye, HiEyeOff } from "react-icons/hi";
+import styles from "./Login.module.css";
 import PageNav from "../components/PageNav";
 import Logo from "../components/Logo";
 import { useNavigate, Link } from "react-router-dom";
@@ -8,6 +9,7 @@ import { useAuth } from "../contexts/AuthContext";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
@@ -61,12 +63,21 @@ export default function Login() {
 
         <div className={styles.row}>
           <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-          />
+          <div className={styles.inputWrapper}>
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+            />
+            <button
+              type="button"
+              className={styles.eyeButton}
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <HiEyeOff /> : <HiEye />}
+            </button>
+          </div>
         </div>
 
         <div>

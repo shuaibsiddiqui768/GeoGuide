@@ -142,6 +142,8 @@ button.ctaLink:hover {
 }
 
 .userIcon {
+  position: relative;
+  /* For the absolute dot */
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -153,6 +155,36 @@ button.ctaLink:hover {
   justify-content: center;
   transition: all 0.3s ease;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.notificationDot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  background-color: #ff6b6b;
+  border-radius: 50%;
+  border: 2px solid var(--color-dark--1);
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7);
+  }
+
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(255, 107, 107, 0);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0);
+  }
 }
 
 .userIcon:hover {
@@ -213,12 +245,22 @@ button.ctaLink:hover {
 .userName {
   font-size: 1.4rem;
   font-weight: 600;
-  color: var(--color-light--1);
+  color: #fff;
+  /* High contrast */
+}
+
+.userHandle {
+  font-size: 1.2rem;
+  color: var(--color-brand--1);
+  /* Explicitly bright/visible */
+  font-weight: 500;
 }
 
 .userEmail {
   font-size: 1.1rem;
-  color: var(--color-light--3);
+  color: var(--color-light--2);
+  /* More visible than light--3 */
+  opacity: 0.8;
 }
 
 .dropdownDivider {
@@ -244,7 +286,15 @@ button.ctaLink:hover {
 
 .dropdownItem:hover {
   background: var(--color-dark--2);
-  color: var(--color-light--1);
+  color: #fff;
+  /* Remain white/light instead of blue */
+}
+
+.dropdownItem:active,
+.dropdownItem:focus {
+  outline: none;
+  background: var(--color-dark--0);
+  color: #fff;
 }
 
 .dropdownIcon {

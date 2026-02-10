@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "./TourList.module.css";
@@ -233,7 +233,6 @@ function TourList() {
             {invites.map((invite) => (
               <div key={invite._id} className={styles.inviteCard}>
                 <div className={styles.inviteInfo}>
-                  <span className={styles.inviteIcon}>✈️</span>
                   <div>
                     <h4 className={styles.inviteName}>{invite.name}</h4>
                     <p className={styles.inviteSender}>

@@ -255,15 +255,16 @@ exports.deleteCity = async (req, res) => {
 
     // 3. Delete images from Cloudinary if any
     if (city.images && city.images.length > 0) {
-      console.log(`Deleting ${city.images.length} images from Cloudinary for city deletion: ${id}`);
+      console.log(`Cleanup: Deleting ${city.images.length} images from Cloudinary for city: ${city.cityName} (${id})`);
       try {
-        await deleteImagesFromCloudinary(city.images);
+        const results = await deleteImagesFromCloudinary(city.images);
+        console.log(`Cloudinary cleanup results for ${city.cityName}:`, results);
       } catch (cloudinaryErr) {
-        console.error("Failed to delete city images from Cloudinary:", cloudinaryErr);
-        // We continue deleting the city doc even if Cloudinary fails
+        console.error("Failed to delete city images from Cloudinary during city deletion:", cloudinaryErr);
       }
     }
 
+    console.log(`Database: Deleting city document: ${city.cityName} (${id})`);
     await City.findByIdAndDelete(id);
     res.status(204).send();
   } catch (err) {

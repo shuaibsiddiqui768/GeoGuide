@@ -10,24 +10,35 @@ const createToken = (id) =>
 
 exports.signup = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, username, email, password } = req.body;
 
-
-    if (!name || !email || !password) {
+    if (!name || !username || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
     const emailNorm = email.trim().toLowerCase();
-    const exists = await User.findOne({ email: emailNorm });
-    if (exists) {
+    const usernameNorm = username.trim().toLowerCase();
+
+    // Check if email exists
+    const emailExists = await User.findOne({ email: emailNorm });
+    if (emailExists) {
       return res.status(409).json({ message: "Email already exists" });
     }
 
-    const user = await User.create({ name, email: emailNorm, password });
+    // Check if username exists
+    const usernameExists = await User.findOne({ username: usernameNorm });
+    if (usernameExists) {
+      return res.status(409).json({ message: "Username already taken" });
+    }
 
+    const user = await User.create({
+      name,
+      username: usernameNorm,
+      email: emailNorm,
+      password
+    });
 
     const token = createToken(user._id);
-
 
     res.status(201).json({
       message: "User registered successfully",
@@ -35,12 +46,91 @@ exports.signup = async (req, res) => {
       user: {
         id: user._id,
         name: user.name,
+        username: user.username,
         email: user.email,
         profileImage: user.profileImage,
         createdAt: user.createdAt,
       },
     });
   } catch (error) {
+    console.error("Signup error:", error);
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({ message: messages[0] });
+    }
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.checkUsername = async (req, res) => {
+  try {
+    const { username, excludeUserId } = req.body;
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    const usernameNorm = username.trim().toLowerCase();
+    const query = { username: usernameNorm };
+
+    if (excludeUserId) {
+      query._id = { $ne: excludeUserId };
+    }
+
+    const user = await User.findOne(query);
+
+    res.status(200).json({
+      available: !user,
+      message: user ? "Username is already taken" : "Username is available"
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.updateUsername = async (req, res) => {
+  try {
+    const { username } = req.body;
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    const usernameNorm = username.trim().toLowerCase();
+
+    // Validation
+    if (usernameNorm.length < 3 || usernameNorm.length > 30) {
+      return res.status(400).json({ message: "Username must be between 3 and 30 characters" });
+    }
+
+    const usernameRegex = /^[a-z0-9_]+$/;
+    if (!usernameRegex.test(usernameNorm)) {
+      return res.status(400).json({ message: "Username can only contain letters, numbers, and underscores" });
+    }
+
+    // Check if taken by SOMEONE ELSE
+    const exists = await User.findOne({ username: usernameNorm, _id: { $ne: req.user._id } });
+    if (exists) {
+      return res.status(409).json({ message: "Username already taken" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { username: usernameNorm },
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({
+      message: "Username updated successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        profileImage: user.profileImage,
+        createdAt: user.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error("Update username error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -78,6 +168,7 @@ exports.login = async (req, res) => {
       user: {
         id: user._id,
         name: user.name,
+        username: user.username,
         email: user.email,
         profileImage: user.profileImage,
         createdAt: user.createdAt,

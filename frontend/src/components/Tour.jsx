@@ -8,6 +8,16 @@ import Spinner from "./Spinner";
 import Message from "./Message";
 import BackButton from "./BackButton";
 
+// Helper to extract country code from flag emoji
+function getCountryCodeFromEmoji(emoji) {
+  if (!emoji) return null;
+  const codePoints = [...emoji]
+    .map(char => char.codePointAt(0))
+    .filter(cp => cp >= 127462 && cp <= 127487)
+    .map(cp => String.fromCharCode(cp - 127397));
+  return codePoints.length === 2 ? codePoints.join('').toLowerCase() : null;
+}
+
 function Tour() {
   const { id } = useParams();
   const { user } = useAuth();
@@ -115,9 +125,24 @@ function Tour() {
 
       {/* Header */}
       <div className={styles.header}>
-        <div className={styles.tourIcon}>✈️</div>
         <div className={styles.tourInfo}>
           <h2 className={styles.tourName}>{currentTour.name}</h2>
+          <div className={styles.tourMetaHeader}>
+            {currentTour.startDate && (
+              <span className={styles.metaItem}>
+                📅 {formatDate(currentTour.startDate)} 
+                {currentTour.endDate && ` — ${formatDate(currentTour.endDate)}`}
+              </span>
+            )}
+            {currentTour.budget > 0 && (
+              <span className={styles.metaItem}>
+                💰 {currentTour.currency} {currentTour.budget.toLocaleString()}
+              </span>
+            )}
+            <span className={styles.metaItem}>
+              🏙️ {tourCities.length} {tourCities.length === 1 ? "Stop" : "Stops"}
+            </span>
+          </div>
           {currentTour.description && (
             <p className={styles.tourDescription}>{currentTour.description}</p>
           )}
@@ -164,6 +189,71 @@ function Tour() {
             </span>
           </div>
         </div>
+      </div>
+
+      {/* Route Section */}
+      <div className={styles.section}>
+        <h3 className={styles.sectionTitle}>
+          🛤️ Trip Route
+        </h3>
+
+        {tourCities.length === 0 ? (
+          <p className={styles.emptyMessage}>
+            No cities added yet. Click on a city on the map to add it to this
+            trip!
+          </p>
+        ) : (
+          <ul className={styles.cityList}>
+            {tourCities.map((city, index) => (
+              <li key={city._id} className={styles.cityItem}>
+                {/* Route indicator */}
+                <div className={styles.routeIndicator}>
+                  <span className={styles.stopNumber}>{index + 1}</span>
+                  {index < tourCities.length - 1 && (
+                    <div className={styles.routeLine}></div>
+                  )}
+                </div>
+                
+                <Link
+                  to={`/app/cities/${city._id}?lat=${city.position?.lat || 0}&lng=${city.position?.lng || 0}`}
+                  className={styles.cityLink}
+                >
+                  <div className={styles.cityDetails}>
+                    <span className={styles.cityName}>
+                      {getCountryCodeFromEmoji(city.emoji) ? (
+                        <img 
+                          src={`https://flagcdn.com/w40/${getCountryCodeFromEmoji(city.emoji)}.png`} 
+                          alt="" 
+                          className={styles.miniFlag}
+                        />
+                      ) : (
+                        city.emoji
+                      )}{" "}
+                      {city.cityName}
+                    </span>
+                    <span className={styles.country}>{city.country}</span>
+                    {city.date && (
+                      <span className={styles.date}>
+                        {new Date(city.date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+                <button
+                  className={styles.removeBtn}
+                  onClick={(e) => handleRemoveCity(e, city._id)}
+                  title="Remove from trip"
+                >
+                  ✕
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* Participants Display */}
@@ -282,67 +372,6 @@ function Tour() {
           </>
         );
       })()}
-
-      {/* Route Section */}
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>
-          🛤️ Trip Route
-        </h3>
-
-        {tourCities.length === 0 ? (
-          <p className={styles.emptyMessage}>
-            No cities added yet. Click on a city on the map to add it to this
-            trip!
-          </p>
-        ) : (
-          <ul className={styles.cityList}>
-            {tourCities.map((city, index) => (
-              <li key={city._id} className={styles.cityItem}>
-                {/* Route indicator */}
-                <div className={styles.routeIndicator}>
-                  <span className={styles.stopNumber}>{index + 1}</span>
-                  {index < tourCities.length - 1 && (
-                    <div className={styles.routeLine}></div>
-                  )}
-                </div>
-                
-                <Link
-                  to={`/app/cities/${city._id}?lat=${city.position?.lat || 0}&lng=${city.position?.lng || 0}`}
-                  className={styles.cityLink}
-                >
-                  {city.images && city.images.length > 0 ? (
-                    <div className={styles.thumbnail}>
-                      <img src={city.images[0]} alt={city.cityName} />
-                    </div>
-                  ) : (
-                    <span className={styles.emoji}>{city.emoji || "📍"}</span>
-                  )}
-                  <div className={styles.cityDetails}>
-                    <span className={styles.cityName}>{city.cityName}</span>
-                    <span className={styles.country}>{city.country}</span>
-                    {city.date && (
-                      <span className={styles.date}>
-                        {new Date(city.date).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      </span>
-                    )}
-                  </div>
-                </Link>
-                <button
-                  className={styles.removeBtn}
-                  onClick={(e) => handleRemoveCity(e, city._id)}
-                  title="Remove from trip"
-                >
-                  ✕
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
 
       <div className={styles.actions}>
         <BackButton />

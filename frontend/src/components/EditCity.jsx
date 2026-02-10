@@ -11,6 +11,16 @@ import { useTours } from "../contexts/ToursContext";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
+// Helper to get flag emoji country code
+function getCountryCodeFromEmoji(emoji) {
+  if (!emoji) return null;
+  const codePoints = [...emoji]
+    .map(char => char.codePointAt(0))
+    .filter(cp => cp >= 127462 && cp <= 127487)
+    .map(cp => String.fromCharCode(cp - 127397));
+  return codePoints.length === 2 ? codePoints.join('').toLowerCase() : null;
+}
+
 function EditCity({ onCancel }) {
   const { id } = useParams();
   const { currentCity, updateCity, isLoading } = useCities();
@@ -211,7 +221,15 @@ function EditCity({ onCancel }) {
           disabled
           className={styles.inputDisabled}
         />
-         <span className={styles.flag}>{currentCity.emoji}</span>
+         {getCountryCodeFromEmoji(currentCity.emoji) ? (
+          <img 
+            src={`https://flagcdn.com/w40/${getCountryCodeFromEmoji(currentCity.emoji)}.png`} 
+            alt="flag" 
+            className={styles.flagImage}
+          />
+        ) : (
+          <span className={styles.flag}>{currentCity.emoji}</span>
+        )}
       </div>
 
       <div className={styles.row}>
@@ -223,7 +241,6 @@ function EditCity({ onCancel }) {
           onChange={(val) => setDate(val)}
           selected={date}
           dateFormat="dd/MM/yyyy"
-          maxDate={new Date()}
           isClearable={false}
           placeholderText="Select date visited"
         />

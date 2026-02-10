@@ -55,8 +55,31 @@
 .tourDescription {
     font-size: 1.3rem;
     color: #bbb;
-    margin: 0;
+    margin: 1rem 0 0 0;
     line-height: 1.5;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 3px solid var(--color-brand--2);
+}
+
+.tourMetaHeader {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.metaItem {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-light--2);
+    background: var(--color-dark--1);
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 /* Trip Details Grid */
@@ -201,7 +224,7 @@
 }
 
 .emoji {
-    font-size: 1.8rem;
+    font-size: 2.2rem;
     flex-shrink: 0;
     width: 40px;
     height: 40px;
@@ -242,6 +265,16 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.miniFlag {
+    height: 1.2rem;
+    width: auto;
+    border-radius: 2px;
+    object-fit: contain;
 }
 
 .country {

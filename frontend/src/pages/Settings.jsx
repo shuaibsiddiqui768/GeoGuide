@@ -1,8 +1,9 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Settings.module.css";
 import PageNav from "../components/PageNav";
 import { useAuth } from "../contexts/AuthContext";
+import debounce from "lodash.debounce";
 
 function Settings() {
   const { user, logout, updateUser } = useAuth();
@@ -26,6 +27,16 @@ function Settings() {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteMsg, setDeleteMsg] = useState({ text: "", type: "" });
 
+  // Username change state
+  const [newUsername, setNewUsername] = useState(user?.username || "");
+  const [usernameStatus, setUsernameStatus] = useState({ 
+    checking: false, 
+    available: null, 
+    error: "" 
+  });
+  const [usernameLoading, setUsernameLoading] = useState(false);
+  const [usernameMsg, setUsernameMsg] = useState({ text: "", type: "" });
+
   // Get API base URL from environment
   const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -38,6 +49,83 @@ function Settings() {
       reader.onerror = (error) => reject(error);
     });
   }
+
+  // Debounced username availability check
+  const checkUsernameAvailability = useMemo(
+    () => debounce(async (username) => {
+      if (username === user?.username) {
+        setUsernameStatus({ checking: false, available: true, error: "" });
+        return;
+      }
+      
+      if (username.length < 3) {
+        setUsernameStatus({ checking: false, available: null, error: "Too short" });
+        return;
+      }
+      
+      const usernameRegex = /^[a-z0-9_]+$/i;
+      if (!usernameRegex.test(username)) {
+        setUsernameStatus({ checking: false, available: null, error: "Letters, numbers, underscores only" });
+        return;
+      }
+
+      try {
+        setUsernameStatus(prev => ({ ...prev, checking: true, error: "" }));
+        const res = await fetch(`${API_BASE}/auth/check-username`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, excludeUserId: user?.id || user?._id }),
+        });
+        const data = await res.json();
+        setUsernameStatus({ 
+          checking: false, 
+          available: data.available, 
+          error: data.available ? "" : "Username already taken" 
+        });
+      } catch (err) {
+        setUsernameStatus({ checking: false, available: null, error: "Failed to check" });
+      }
+    }, 500),
+    [user, API_BASE]
+  );
+
+  const handleUsernameChange = async (e) => {
+    e.preventDefault();
+    setUsernameMsg({ text: "", type: "" });
+
+    if (newUsername === user?.username) {
+        setUsernameMsg({ text: "Username updated!", type: "success" });
+        return;
+    }
+
+    if (usernameStatus.available === false) {
+      setUsernameMsg({ text: "Please choose an available username", type: "error" });
+      return;
+    }
+
+    setUsernameLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE}/auth/update-username`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ username: newUsername }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to update username");
+
+      updateUser({ username: data.user.username });
+      setUsernameMsg({ text: "Username updated successfully!", type: "success" });
+    } catch (err) {
+      setUsernameMsg({ text: err.message, type: "error" });
+    } finally {
+      setUsernameLoading(false);
+    }
+  };
 
   // Handle image selection
   async function handleImageSelect(e) {
@@ -278,9 +366,68 @@ function Settings() {
             </div>
             <div className={styles.profileInfo}>
               <span className={styles.profileName}>{user?.name || "User"}</span>
+              {user?.username && (
+                <span className={styles.profileUsername}>@{user.username}</span>
+              )}
               <span className={styles.profileEmail}>{user?.email}</span>
             </div>
           </div>
+        </section>
+
+        {/* Username Section */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>
+             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="8.5" cy="7" r="4" />
+                <polyline points="17 11 19 13 23 9" />
+             </svg>
+             Change Username
+          </h2>
+          <form onSubmit={handleUsernameChange} className={styles.form}>
+             <div className={styles.inputGroup}>
+                <label htmlFor="newUsername">New Handle</label>
+                <div className={styles.usernameInputWrapper}>
+                    <input
+                        type="text"
+                        id="newUsername"
+                        value={newUsername}
+                        onChange={(e) => {
+                            setNewUsername(e.target.value);
+                            setUsernameStatus(prev => ({ ...prev, checking: true, error: "" }));
+                            checkUsernameAvailability(e.target.value);
+                        }}
+                        placeholder="new_username"
+                        required
+                        className={
+                            usernameStatus.available === true ? styles.validInput : 
+                            usernameStatus.error ? styles.invalidInput : ""
+                        }
+                    />
+                    {usernameStatus.checking && <span className={styles.statusIcon}>⏳</span>}
+                    {usernameStatus.available === true && <span className={styles.statusIcon}>✅</span>}
+                    {usernameStatus.available === false && <span className={styles.statusIcon}>❌</span>}
+                </div>
+                {usernameStatus.error && (
+                    <p className={styles.inputHintError}>{usernameStatus.error}</p>
+                )}
+                {!usernameStatus.error && (
+                    <p className={styles.inputHint}>Your unique traveler ID: letters, numbers, and underscores.</p>
+                )}
+             </div>
+             {usernameMsg.text && (
+              <p className={`${styles.message} ${styles[usernameMsg.type]}`}>
+                {usernameMsg.text}
+              </p>
+            )}
+             <button
+              type="submit"
+              className={styles.primaryBtn}
+              disabled={usernameLoading || usernameStatus.available === false || usernameStatus.checking}
+            >
+              {usernameLoading ? "Updating..." : "Update Handle"}
+            </button>
+          </form>
         </section>
 
         {/* Change Password Section */}

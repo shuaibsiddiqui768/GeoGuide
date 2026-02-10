@@ -9,30 +9,28 @@ const getPublicIdFromUrl = (url) => {
     if (!url || typeof url !== "string") return null;
 
     try {
-        // Cloudinary URLs usually follow: .../upload/[transformations]/[version]/[public_id].[ext]
         const parts = url.split("/");
         const uploadIndex = parts.indexOf("upload");
         if (uploadIndex === -1) return null;
 
-        // Take everything after 'upload'
         const afterUpload = parts.slice(uploadIndex + 1);
 
-        // Filter out segments that are clearly NOT the public_id
-        // 1. Transformations: segments containing commas (e.g. w_200,c_fill)
-        // 2. Version: segments starting with 'v' followed by digits (e.g. v12345678)
+        // Filter segments:
+        // 1. Skip version (v12345678)
+        // 2. Skip transformations (contains commas or matches specific patterns like w_300)
         const publicIdSegments = afterUpload.filter(segment => {
-            if (segment.match(/^v\d+$/)) return false; // Skip version
-            if (segment.includes(",")) return false;    // Skip complex transformations
-            // Skip simple transformations like w_300 or h_200
-            if (segment.match(/^[a-z]_[a-z0-9]+$/)) return false;
+            if (segment.match(/^v\d+$/)) return false;
+            if (segment.includes(",")) return false;
+            if (segment.match(/^[a-z]_[a-z0-9%]+$/)) return false; // Added support for common transform chars
             return true;
         });
 
-        // The last part contains the filename + extension
         const fullIdWithExt = publicIdSegments.join("/");
 
-        // Remove file extension
-        return fullIdWithExt.split(".").slice(0, -1).join(".");
+        // Remove file extension (e.g., .jpg, .png, .webp)
+        // Cloudinary handles public IDs without extensions in destruction calls
+        const publicId = fullIdWithExt.split(".").slice(0, -1).join(".");
+        return publicId;
     } catch (err) {
         console.error("Error parsing Cloudinary URL:", err);
         return null;
@@ -50,18 +48,19 @@ const deleteImagesFromCloudinary = async (urls) => {
     const deletePromises = urlArray
         .map(url => getPublicIdFromUrl(url))
         .filter(publicId => publicId !== null)
-        .map(publicId => {
-            console.log(`Deleting from Cloudinary: ${publicId}`);
-            return cloudinary.uploader.destroy(publicId);
+        .map(async (publicId) => {
+            try {
+                console.log(`Attempting Cloudinary destruction for: ${publicId}`);
+                const result = await cloudinary.uploader.destroy(publicId);
+                console.log(`Cloudinary destruction result for ${publicId}:`, result);
+                return result;
+            } catch (err) {
+                console.error(`Error destroying Cloudinary asset ${publicId}:`, err);
+                return { result: "error", error: err.message };
+            }
         });
 
-    try {
-        const results = await Promise.all(deletePromises);
-        return results;
-    } catch (err) {
-        console.error("Cloudinary batch delete error:", err);
-        throw err;
-    }
+    return await Promise.all(deletePromises);
 };
 
 module.exports = {

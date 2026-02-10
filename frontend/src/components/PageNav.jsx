@@ -14,6 +14,8 @@ function PageNav() {
   const { invites } = useTours();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
+  const [hasUnseenNotifications, setHasUnseenNotifications] = useState(false);
+  const prevInvitesCount = useRef(invites.length);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -26,6 +28,16 @@ function PageNav() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Update unseen state when invites change
+  useEffect(() => {
+    if (invites.length > prevInvitesCount.current) {
+      setHasUnseenNotifications(true);
+    } else if (invites.length === 0) {
+      setHasUnseenNotifications(false);
+    }
+    prevInvitesCount.current = invites.length;
+  }, [invites.length]);
 
   function toggleMenu() {
     setMenuOpen((open) => !open);
@@ -64,6 +76,7 @@ function PageNav() {
   }
 
   function handleNotificationsClick() {
+    setHasUnseenNotifications(false);
     setUserDropdownOpen(false);
     setMenuOpen(false);
     navigate("/notifications");
@@ -136,6 +149,9 @@ function PageNav() {
                   ) : (
                     <span className={styles.userInitial}>{getUserInitial()}</span>
                   )}
+                  {hasUnseenNotifications && invites.length > 0 && (
+                    <span className={styles.notificationDot}></span>
+                  )}
                 </button>
 
                 {/* Dropdown Menu */}
@@ -143,8 +159,11 @@ function PageNav() {
                   <div className={styles.userDropdown}>
                     <div className={styles.userInfo}>
                       <span className={styles.userName}>
-                        {user?.name || user?.email || "User"}
+                        {user?.name || "Traveler"}
                       </span>
+                      {user?.username && (
+                        <span className={styles.userHandle}>@{user.username}</span>
+                      )}
                       <span className={styles.userEmail}>{user?.email}</span>
                     </div>
                     <div className={styles.dropdownDivider}></div>

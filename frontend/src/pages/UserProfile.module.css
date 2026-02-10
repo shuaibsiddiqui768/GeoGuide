@@ -413,6 +413,22 @@
     transition: all 0.2s;
 }
 
+.flagContainerMini {
+    width: 3.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.flagImgMini {
+    width: 100%;
+    height: auto;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
 .clearFilterBtn:hover {
     background: var(--color-brand--2);
     color: var(--color-dark--0);
@@ -557,6 +573,23 @@
     .lightboxContent {
         max-width: 100%;
     }
+}
+
+.noDataText {
+    font-size: 1.4rem;
+    color: #666;
+    text-align: center;
+    padding: 2rem 0;
+    font-style: italic;
+}
+
+.empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--color-dark--2);
+    border-radius: 20px;
+    color: #888;
+    font-size: 1.6rem;
 }
 
 /* Responsive */

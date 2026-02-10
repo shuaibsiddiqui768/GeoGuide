@@ -29,14 +29,26 @@ function TourItem({ tour }) {
   return (
     <li className={styles.tourItem}>
       <Link to={`/app/tours/${tour._id}`} className={styles.tourLink}>
-        <div className={styles.tourIcon}>🗺️</div>
         <div className={styles.tourInfo}>
           <h3 className={styles.tourName}>{tour.name}</h3>
           {tour.description && (
             <p className={styles.tourDescription}>{tour.description}</p>
           )}
-          <span className={styles.cityCount}>
-            {cityCount} {cityCount === 1 ? "city" : "cities"}
+          <span className={styles.tourMeta}>
+            {tour.startDate && (
+              <span className={styles.dateRange}>
+                📅 {new Date(tour.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                {tour.endDate && ` - ${new Date(tour.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}
+              </span>
+            )}
+            {tour.budget > 0 && (
+              <span className={styles.budget}>
+                💰 {tour.currency} {tour.budget.toLocaleString()}
+              </span>
+            )}
+            <span className={styles.cityCount}>
+              🏙️ {cityCount} {cityCount === 1 ? "city" : "cities"}
+            </span>
           </span>
         </div>
       </Link>
