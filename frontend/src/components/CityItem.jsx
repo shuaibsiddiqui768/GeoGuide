@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import styles from "./CityItem.module.css";
 import { useCities } from "../contexts/CitiesContext";
+import { useAuth } from "../contexts/AuthContext";
 
 const formatDate = (date) => {
   if (!date) return "Unknown date";
@@ -32,8 +33,15 @@ function getCountryCodeFromEmoji(emoji) {
 
 function CityItem({ city }) {
   const { currentCity, deleteCity } = useCities();
+  const { user: authUser } = useAuth();
 
-  const { cityName, emoji, date, _id, position } = city;
+  const { cityName, emoji, date, _id, position, user: ownerId } = city;
+
+  // Check if current user is the owner
+  const isOwner = authUser && (
+    (authUser._id === ownerId || authUser._id === ownerId?._id) ||
+    (authUser.id === ownerId || authUser.id === ownerId?._id)
+  );
 
   function handleClick(e) {
     e.preventDefault();
@@ -75,9 +83,13 @@ function CityItem({ city }) {
         )}
         <h3 className={styles.name}>{cityName}</h3>
         <time className={styles.date}>({formatDate(date)})</time>
-        <button className={styles.deleteBtn} onClick={handleClick}>
-          &times;
-        </button>
+        
+        {/* Only owner can delete their pinned city */}
+        {isOwner && (
+          <button className={styles.deleteBtn} onClick={handleClick}>
+            &times;
+          </button>
+        )}
       </Link>
     </li>
   );

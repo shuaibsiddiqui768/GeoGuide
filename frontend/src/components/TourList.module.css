@@ -90,7 +90,7 @@
 
 .inputGroup input::placeholder,
 .inputGroup textarea::placeholder {
-    color: #888;
+    color: #eee;
 }
 
 .error {

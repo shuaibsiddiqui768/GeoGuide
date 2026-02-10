@@ -87,43 +87,54 @@ exports.getCity = async (req, res) => {
     const city = await City.findById(id);
     if (!city) return res.status(404).json({ message: "City not found" });
 
-    // 2. Check Ownership
+    // 4. Permission Determination
+    let canSee = false;
+    let canEdit = false;
+
+    // A. Ownership check
     if (city.user.toString() === req.user._id.toString()) {
-      return res.status(200).json(city);
+      canSee = true;
+      canEdit = true;
     }
 
-    // 3. Check Friendship/Public status via Owner
-    const owner = await User.findById(city.user);
-    if (owner) {
-      const currentUser = await User.findById(req.user._id);
-      const isFriend = currentUser.friends.some(
-        (f) => f.toString() === owner._id.toString()
-      );
-
-      if (isFriend || owner.isPublic) {
-        return res.status(200).json(city);
+    // B. Tour Access check (Owner or Participant of a tour containing this city)
+    if (!canEdit) {
+      const tourAccess = await Tour.findOne({
+        cities: id,
+        $or: [
+          { user: req.user._id },
+          { participants: req.user._id }
+        ]
+      });
+      if (tourAccess) {
+        canSee = true;
+        canEdit = true;
       }
     }
 
-    // 4. Check if user is in a shared/invited tour that includes this city
-    const tourCityId = new mongoose.Types.ObjectId(id);
-    const userId = new mongoose.Types.ObjectId(req.user._id);
-
-    const sharedTour = await Tour.findOne({
-      cities: tourCityId,
-      $or: [
-        { user: userId },
-        { participants: userId },
-        { pendingInvites: userId }
-      ],
-    });
-
-    if (sharedTour) {
-      return res.status(200).json(city);
+    // C. Friendship/Public check (View only if not already granted)
+    if (!canSee) {
+      const owner = await User.findById(city.user);
+      if (owner) {
+        const currentUser = await User.findById(req.user._id);
+        const isFriend = currentUser.friends.some(
+          (f) => f.toString() === owner._id.toString()
+        );
+        if (isFriend || owner.isPublic) {
+          canSee = true;
+        }
+      }
     }
 
-    // If none of the above, unauthorized
-    return res.status(403).json({ message: "Unauthorized to view this city" });
+    if (!canSee) {
+      return res.status(403).json({ message: "Unauthorized to view this city" });
+    }
+
+    // Convert to plain object and add canEdit flag
+    const cityObj = city.toObject();
+    cityObj.canEdit = canEdit;
+
+    return res.status(200).json(cityObj);
   } catch (err) {
     console.error("getCity error:", err);
     res.status(500).json({ message: "Server error retrieving city" });
@@ -189,10 +200,28 @@ exports.updateCity = async (req, res) => {
     const city = await City.findById(id);
     if (!city) return res.status(404).json({ message: "City not found" });
 
-    // 2. Check Ownership - only the creator can edit their pinned cities
-    if (city.user.toString() !== req.user._id.toString()) {
+    // 2. Permission Check:
+    // A user can edit a city if they:
+    // - Created the city (city.user)
+    // - OR are the owner or a participant of a tour that contains this city
+    const currentUserId = req.user._id.toString();
+    const isCreator = city.user.toString() === currentUserId;
+
+    let hasTourAccess = false;
+    if (!isCreator) {
+      const tourAccess = await Tour.findOne({
+        cities: id,
+        $or: [
+          { user: req.user._id },
+          { participants: req.user._id }
+        ]
+      });
+      if (tourAccess) hasTourAccess = true;
+    }
+
+    if (!isCreator && !hasTourAccess) {
       return res.status(403).json({
-        message: "Unauthorized: Only the creator can edit this city's details"
+        message: "Unauthorized: You do not have permission to edit this city."
       });
     }
 

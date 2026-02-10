@@ -22,7 +22,7 @@
 
 .error h2 {
     font-size: 2rem;
-    color: #888;
+    color: #ccc;
     margin-bottom: 1.5rem;
 }
 
@@ -102,7 +102,7 @@
 
 .memberSince {
     font-size: 1.3rem;
-    color: #888;
+    color: #ccc;
     margin: 0;
 }
 
@@ -169,7 +169,7 @@
 
 .loadingBtn {
     background: var(--color-dark--1);
-    color: #888;
+    color: #ccc;
     cursor: not-allowed;
 }
 
@@ -199,7 +199,7 @@
 
 .statLabel {
     font-size: 1.2rem;
-    color: #888;
+    color: #ccc;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -226,7 +226,7 @@
 
 .private p {
     font-size: 1.6rem;
-    color: #888;
+    color: #ccc;
 }
 
 /* Sections */
@@ -314,7 +314,7 @@
 }
 
 .tripInfo p {
-    color: #aaa;
+    color: #ccc;
     font-size: 1.4rem;
     margin-bottom: 1rem;
 }
@@ -387,7 +387,7 @@
 
 .cityCountry {
     font-size: 1.2rem;
-    color: #888;
+    color: #ccc;
 }
 
 .sectionTitleHeader {
@@ -494,7 +494,7 @@
 
 .lightboxCaption p {
     font-size: 1.4rem;
-    color: #888;
+    color: #ccc;
 }
 
 .closeBtn {
@@ -577,7 +577,7 @@
 
 .noDataText {
     font-size: 1.4rem;
-    color: #666;
+    color: #eee;
     text-align: center;
     padding: 2rem 0;
     font-style: italic;
@@ -588,7 +588,7 @@
     padding: 4rem 2rem;
     background: var(--color-dark--2);
     border-radius: 20px;
-    color: #888;
+    color: #ccc;
     font-size: 1.6rem;
 }
 
@@ -617,4 +617,57 @@
         max-width: 100%;
         justify-content: flex-start;
     }
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.sectionHeader .sectionTitle {
+    margin-bottom: 0;
+}
+
+.toggleBtn {
+    background: transparent;
+    border: 1px solid var(--color-dark--0);
+    color: var(--color-brand--2);
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.toggleBtn:hover {
+    background: var(--color-brand--2);
+    color: var(--color-dark--0);
+    transform: translateY(-1px);
+}
+.loadMoreContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+}
+
+.viewMoreBtn {
+    background: var(--color-dark--1);
+    border: 1px solid var(--color-brand--2);
+    color: var(--color-brand--2);
+    padding: 1.2rem 2.4rem;
+    border-radius: 12px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.viewMoreBtn:hover {
+    background: var(--color-brand--2);
+    color: var(--color-dark--0);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 196, 106, 0.2);
 }

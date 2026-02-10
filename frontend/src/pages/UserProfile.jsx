@@ -42,6 +42,9 @@ function UserProfile() {
   const [showLightbox, setShowLightbox] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [filterCity, setFilterCity] = useState(null);
+  const [isTripsExpanded, setIsTripsExpanded] = useState(false);
+  const [isCitiesExpanded, setIsCitiesExpanded] = useState(false);
+  const [visiblePhotosLimit, setVisiblePhotosLimit] = useState(4);
 
   // Fetch profile and data
   useEffect(() => {
@@ -185,6 +188,11 @@ function UserProfile() {
   const filteredPhotos = filterCity 
     ? allPhotos.filter(p => p.cityName === filterCity)
     : allPhotos;
+
+  // Reset photo limit when filter changes
+  useEffect(() => {
+    setVisiblePhotosLimit(4);
+  }, [filterCity]);
 
   const totalCountries = [...new Set(cities.map(c => c.country))].length;
 
@@ -355,39 +363,59 @@ function UserProfile() {
         ) : (
           <div className={styles.content}>
             {/* Recent Trips */}
-            <div className={styles.section}>
-              <h2 className={styles.sectionTitle}>✈️ Recent Trips</h2>
-              {tours.length > 0 ? (
-                <div className={styles.tripList}>
-                  {tours.map(tour => (
-                    <div key={tour._id} className={styles.tripCard}>
-                      <div className={styles.tripInfo}>
-                        <h3>{tour.name}</h3>
-                        <p>{tour.description}</p>
-                        <span className={styles.tripDate}>
-                          {tour.startDate ? new Date(tour.startDate).toLocaleDateString() : 'TBA'} - 
-                          {tour.endDate ? new Date(tour.endDate).toLocaleDateString() : 'TBA'}
-                        </span>
-                      </div>
-                      <div className={styles.tripCities}>
-                        {tour.cities?.map(city => (
-                          <span key={city._id} className={styles.cityBadge}>{city.emoji} {city.cityName}</span>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+              <div className={styles.section}>
+                <div className={styles.sectionHeader}>
+                  <h2 className={styles.sectionTitle}>✈️ Recent Trips</h2>
+                  {tours.length > 2 && (
+                    <button 
+                      className={styles.toggleBtn}
+                      onClick={() => setIsTripsExpanded(!isTripsExpanded)}
+                    >
+                      {isTripsExpanded ? "Show Less" : `View All (${tours.length})`}
+                    </button>
+                  )}
                 </div>
-              ) : (
-                <p className={styles.noDataText}>No trips shared yet.</p>
-              )}
-            </div>
+                {tours.length > 0 ? (
+                  <div className={styles.tripList}>
+                    {(isTripsExpanded ? tours : tours.slice(0, 2)).map(tour => (
+                      <div key={tour._id} className={styles.tripCard}>
+                        <div className={styles.tripInfo}>
+                          <h3>{tour.name}</h3>
+                          <p>{tour.description}</p>
+                          <span className={styles.tripDate}>
+                            {tour.startDate ? new Date(tour.startDate).toLocaleDateString() : 'TBA'} - 
+                            {tour.endDate ? new Date(tour.endDate).toLocaleDateString() : 'TBA'}
+                          </span>
+                        </div>
+                        <div className={styles.tripCities}>
+                          {tour.cities?.map(city => (
+                            <span key={city._id} className={styles.cityBadge}>{city.cityName}</span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className={styles.noDataText}>No trips shared yet.</p>
+                )}
+              </div>
 
             {/* Cities Section */}
             {cities.length > 0 && (
               <div className={styles.section}>
-                <h2 className={styles.sectionTitle}>📍 Visited Cities</h2>
+                <div className={styles.sectionHeader}>
+                  <h2 className={styles.sectionTitle}>📍 Visited Cities</h2>
+                  {cities.length > 8 && (
+                    <button 
+                      className={styles.toggleBtn}
+                      onClick={() => setIsCitiesExpanded(!isCitiesExpanded)}
+                    >
+                      {isCitiesExpanded ? "Show Less" : `View All (${cities.length})`}
+                    </button>
+                  )}
+                </div>
                 <div className={styles.cityGrid}>
-                  {cities.map((city) => {
+                  {(isCitiesExpanded ? cities : cities.slice(0, 8)).map((city) => {
                     const countryCode = getCountryCodeFromEmoji(city.emoji);
                     const flagUrl = countryCode 
                       ? `https://flagcdn.com/w80/${countryCode}.png`
@@ -435,16 +463,29 @@ function UserProfile() {
               </div>
               
               {filteredPhotos.length > 0 ? (
-                <div className={styles.photoGrid}>
-                  {filteredPhotos.map((photo, i) => (
-                    <div key={i} className={styles.photoCard} onClick={() => openLightbox(i)}>
-                      <img src={photo.url} alt={`${photo.cityName}, ${photo.country}`} />
-                      <div className={styles.photoOverlay}>
-                        <span>{photo.cityName}, {photo.country}</span>
+                <>
+                  <div className={styles.photoGrid}>
+                    {filteredPhotos.slice(0, visiblePhotosLimit).map((photo, i) => (
+                      <div key={i} className={styles.photoCard} onClick={() => openLightbox(i)}>
+                        <img src={photo.url} alt={`${photo.cityName}, ${photo.country}`} />
+                        <div className={styles.photoOverlay}>
+                          <span>{photo.cityName}, {photo.country}</span>
+                        </div>
                       </div>
+                    ))}
+                  </div>
+                  
+                  {visiblePhotosLimit < filteredPhotos.length && (
+                    <div className={styles.loadMoreContainer}>
+                      <button 
+                        className={styles.viewMoreBtn}
+                        onClick={() => setVisiblePhotosLimit(prev => prev + 4)}
+                      >
+                        View More Photos ({filteredPhotos.length - visiblePhotosLimit} left)
+                      </button>
                     </div>
-                  ))}
-                </div>
+                  )}
+                </>
               ) : (
                 <p className={styles.noDataText}>
                   {filterCity ? `No photos found for ${filterCity}.` : "No images uploaded yet."}

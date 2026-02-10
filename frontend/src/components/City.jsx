@@ -37,11 +37,9 @@ function City() {
   const { user: authUser } = useAuth();
   const { getCity, currentCity, isLoading, updateCity } = useCities();
   
-  // Check if current user is the owner
-  const isOwner = authUser && currentCity && (
-    (authUser._id && (authUser._id === currentCity.user || authUser._id === currentCity.user?._id)) ||
-    (authUser.id && (authUser.id === currentCity.user || authUser.id === currentCity.user?._id))
-  );
+  // Check if current user has edit permissions (either owner or tour participant)
+  const canEdit = currentCity?.canEdit;
+  const isOwner = canEdit; // Renaming usage for compatibility with existing UI logic
   const [selectedImage, setSelectedImage] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);

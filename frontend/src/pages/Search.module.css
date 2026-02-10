@@ -20,7 +20,7 @@
 
 .subtitle {
     font-size: 1.5rem;
-    color: #888;
+    color: #eee;
     text-align: center;
     margin: 0 0 2.5rem 0;
 }
@@ -84,7 +84,7 @@
 
 .loginPrompt p {
     font-size: 1.5rem;
-    color: #aaa;
+    color: #eee;
     margin: 0;
 }
 
@@ -175,7 +175,7 @@
 
 .userBio {
     font-size: 1.2rem;
-    color: #888;
+    color: #eee;
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -243,20 +243,20 @@
 
 .friendsBtn {
     background: transparent;
-    color: #888;
+    color: #eee;
     border: 1px solid #555;
 }
 
 .friendsBtn:hover {
-    border-color: #888;
-    color: #aaa;
+    border-color: #eee;
+    color: #eee;
 }
 
 /* No Results */
 .noResults {
     text-align: center;
     font-size: 1.5rem;
-    color: #888;
+    color: #eee;
     padding: 3rem 0;
 }
 
@@ -270,7 +270,7 @@
 
 .placeholder>p {
     font-size: 1.8rem;
-    color: #aaa;
+    color: #eee;
     margin: 0 0 2rem 0;
 }
 
@@ -280,7 +280,7 @@
 
 .suggestionTitle {
     font-size: 1.3rem;
-    color: #666;
+    color: #ddd;
     display: block;
     margin-bottom: 1rem;
 }
@@ -296,7 +296,7 @@
     padding: 0.6rem 1.2rem;
     background: var(--color-dark--1);
     border: 1px solid var(--color-dark--0);
-    color: #aaa;
+    color: #eee;
     border-radius: 20px;
     font-size: 1.2rem;
     font-family: inherit;

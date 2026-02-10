@@ -111,7 +111,7 @@
 
 .detailLabel {
     font-size: 1rem;
-    color: #aaa;
+    color: #eee;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -150,7 +150,7 @@
 
 .emptyMessage {
     font-size: 1.3rem;
-    color: #aaa;
+    color: #eee;
     text-align: center;
     padding: 2rem 1rem;
     margin: auto;
@@ -422,7 +422,7 @@
 
 .pendingParticipant .participantName {
     font-style: italic;
-    color: #888;
+    color: #eee;
 }
 
 /* Invitation Banner */
@@ -668,7 +668,7 @@
 
 .noFriends {
     font-size: 1.2rem;
-    color: #888;
+    color: #eee;
     text-align: center;
     padding: 2.5rem 1rem;
     background: var(--color-dark--1);
